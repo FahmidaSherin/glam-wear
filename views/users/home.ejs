@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- molla/index-6.html  22 Nov 2019 09:56:18 GMT -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Glam Wear - Bootstrap eCommerce Template</title>
+    <meta name="keywords" content="HTML5 Template">
+    <meta name="description" content="Molla - Bootstrap eCommerce Template">
+    <meta name="author" content="p-themes">
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/icons/apple-touch-icon.png">
+   
+    <meta name="apple-mobile-web-app-title" content="Molla">
+    <meta name="application-name" content="Molla">
+    <meta name="msapplication-TileColor" content="#cc9966">
+    <meta name="msapplication-config" content="assets/images/icons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="assets/vendor/line-awesome/line-awesome/line-awesome/css/line-awesome.min.css">
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/plugins/owl-carousel/owl.carousel.css">
+    <link rel="stylesheet" href="assets/css/plugins/magnific-popup/magnific-popup.css">
+    <link rel="stylesheet" href="assets/css/plugins/jquery.countdown.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/skins/skin-demo-6.css">
+    <link rel="stylesheet" href="assets/css/demos/demo-6.css">
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <header class="header header-6">
+            <div class="header-top">
+                <div class="container">
+                    <div class="header-left">
+                    </div>
+
+                    <div class="header-right">
+                        <div class="social-icons social-icons-color">
+                        </div>
+                        <ul class="top-menu top-link-menu">
+                            <li>
+                                <ul>
+                                    <li><a href="/login"><i class="icon-user"></i>Login</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <div class="header-dropdown">
+                            <div class="header-menu">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-middle">
+                <div class="container">
+                    <div class="header-left">
+                        <div class="header-search header-search-extended header-search-visible d-none d-lg-block">
+                            <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
+                        </div>
+                    </div>
+                    <div class="header-center">
+                        <a href="home" class="logo">
+                            <img src="assets/images/demos/demo-6/new1.png" alt="Molla Logo" width="250" height="40">
+
+                        </a>
+                    </div>
+
+                    <div class="header-right">
+                        <a href="/login" class="wishlist-link">
+                            <i class="icon-heart-o"></i>
+                            <span class="wishlist-txt">My Wishlist</span>
+                        </a>
+
+                        <div class="dropdown cart-dropdown">
+                            <a href="/login" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false" data-display="static">
+                                <i class="icon-shopping-cart"></i>
+                            </a>
+                            <%if(user){%>
+                                <a href="/profile" class="dashboard-link">
+                                    <span class="wishlist-txt"> <i class="icon-user">
+                                            <%=user.name%>
+                                        </i> </span>
+                                </a>
+                                <%}else {%>
+                                    <a href="/login">
+                                        <span class="wishlist-txt"> <i class="icon-user"></i> My Account</span>
+                                    </a>
+                                    <%}%>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-bottom sticky-header">
+                <div class="container">
+                    <div class="header-left">
+                        <nav class="main-nav">
+                            <ul class="menu sf-arrows">
+                                <li class="megamenu-container active">
+                                    <a href="home" class="sf-with-ul">Home</a>
+
+
+                                <li>
+                                    <a href="shop" class="sf-with-ul">Shop</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="sf-with-ul">Pages</a>
+
+                                    <ul>
+                                        <li><a href="/login">Login</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <button class="mobile-menu-toggler">
+                            <span class="sr-only">Toggle mobile menu</span>
+                            <i class="icon-bars"></i>
+                        </button>
+                    </div>
+
+
+                    <div class="header-right">
+                        <i class="la la-lightbulb-o"></i>
+                        <p>Clearance Up to 30% Off</span></p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main">
+            <div class="intro-slider-container">
+                <div class="intro-slider owl-carousel owl-theme owl-nav-inside owl-light" data-toggle="owl"
+                    data-owl-options='{
+                        "dots": false,
+                        "nav": false, 
+                        "responsive": {
+                            "992": {
+                                "nav": true
+                            }
+                        }
+                    }'>
+                    <div class="intro-slide"
+                        style="background-image: url(assets/images/demos/demo-6/slider/slide-1.jpg);">
+                        <div class="container intro-content text-center">
+                            <h3 class="intro-subtitle text-white">You're Looking Good</h3>
+                            <h1 class="intro-title text-white">New Lookbook</h1>
+
+                            <a href="shop" class="btn btn-outline-white-4">
+                                <span>Discover More</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="intro-slide"
+                        style="background-image: url(assets/images/demos/demo-6/slider/slide-2.jpg);">
+                        <div class="container intro-content text-center">
+                            <h3 class="intro-subtitle text-white">Don’t Miss</h3>
+                            <h1 class="intro-title text-white">Mysrety Deals</h1>
+
+                            <a href="shop" class="btn btn-outline-white-4">
+                                <span>Discover More</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="slider-loader"></span>
+            </div>
+
+            <div class="pt-2 pb-3">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="banner banner-overlay">
+                                <a href="#">
+                                    <img src="assets/images/demos/demo-6/banners/banner-1.jpg" alt="Banner">
+                                </a>
+
+                                <div class="banner-content banner-content-center">
+                                    <h4 class="banner-subtitle text-white"><a href="#">New in</a></h4>
+                                    <h3 class="banner-title text-white"><a href="#"><strong>Women’s</strong></h3>
+                                    <a href="#" class="btn btn-outline-white banner-link underline">Shop Now</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="banner banner-overlay">
+                                <a href="#">
+                                    <img src="assets/images/demos/demo-6/banners/banner-2.jpg" alt="Banner">
+                                </a>
+
+                                <div class="banner-content banner-content-center">
+                                    <h4 class="banner-subtitle text-white"><a href="#">New in</a></h4>
+                                    <h3 class="banner-title text-white"><a href="#"><strong>Men’s</strong></a></h3>
+                                    <a href="#" class="btn btn-outline-white banner-link underline">Shop Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mt-0 mb-0">
+                </div>
+            </div>
+
+            <div class="mb-5"></div>
+            <div class="container">
+                <div class="heading heading-center mb-3">
+                    <h2 class="title">Trending</h2>
+
+                    <ul class="nav nav-pills justify-content-center" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="trending-all-link" data-toggle="tab" href="#trending-all-tab"
+                                role="tab" aria-controls="trending-all-tab" aria-selected="true">All</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="trending-women-link" data-toggle="tab" href="#trending-women-tab"
+                                role="tab" aria-controls="trending-women-tab" aria-selected="false">Women</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="trending-men-link" data-toggle="tab" href="#trending-men-tab"
+                                role="tab" aria-controls="trending-men-tab" aria-selected="false">Men</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="tab-content tab-content-carousel">
+                    <div class="tab-pane p-0 fade show active" id="trending-all-tab" role="tabpanel"
+                        aria-labelledby="trending-all-link">
+                        <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow"
+                            data-toggle="owl" data-owl-options='{
+                                "nav": false, 
+                                "dots": true,
+                                "margin": 20,
+                                "loop": false,
+                                "responsive": {
+                                    "0": {
+                                        "items":2
+                                    },
+                                    "480": {
+                                        "items":2
+                                    },
+                                    "768": {
+                                        "items":3
+                                    },
+                                    "992": {
+                                        "items":4
+                                    },
+                                    "1200": {
+                                        "items":4,
+                                        "nav": true,
+                                        "dots": false
+                                    }
+                                }
+                            }'>
+                            <% products. forEach(product=> { %>
+                                <div class="product product-7 text-center">
+                                    <figure class="product-media">
+                                        <span class="product-label label-new">New</span>
+                                        <a href="product.html">
+                                            <img src="/upload/<%= product.image[0] %>" alt="Product image"
+                                                class="product-image">
+                                        </a>
+
+                                        <div class="product-action-vertical">
+                                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add
+                                                    to
+                                                    wishlist</span></a>
+                                            <a href="popup/quickView.html" class="btn-product-icon btn-quickview"
+                                                title="Quick view"><span>Quick view</span></a>
+                                            <a href="#" class="btn-product-icon btn-compare"
+                                                title="Compare"><span>Compare</span></a>
+                                        </div>
+
+                                        <div class="product-action">
+                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                        </div>
+                                    </figure>
+
+                                    <div class="product-body">
+                                        <div class="product-cat">
+                                            <a href="#">
+                                                <%= product.category.name %>>
+                                            </a>
+                                        </div>
+                                        <h3 class="product-title"><a href="product.html">Brown paperbag waist <br>pencil
+                                                skirt</a></h3>
+                                        <div class="product-price">
+                                            ₹ <%= product.price %>
+                                        </div>
+                                        <div class="ratings-container">
+                                            <div class="ratings">
+                                                <div class="ratings-val" style="width: 20%;"></div>
+                                            </div>
+                                            <span class="ratings-text">( 2 Reviews )</span>
+                                        </div>
+
+                                        <div class="product-nav product-nav-thumbs">
+                                            <a href="#" class="active">
+                                                <img src="/upload/<%= product.image[1] %>" alt="product desc">
+                                            </a>
+                                            <a href="#">
+                                                <img src="/upload/<%= product.image[2] %>" alt="product desc">
+                                            </a>
+
+                                            <a href="#">
+                                                <img src="/upload/<%= product.image[3] %>" alt="product desc">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                                    <div class="mb-5"></div>
+                                    <div class="mb-6"></div>
+
+                                    <div class="mb-2"></div>
+
+                                    <div class="container">
+                                    </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-middle">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="widget widget-about">
+                                <h4 class="widget-title">about Glam Wear</h4>
+                                <p>Praesent dapibus, neque id cursus ucibus, tortor neque egestas augue, eu vulputate
+                                    magna eros eu erat. </p>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="widget">
+                                <h4 class="widget-title">Useful Links</h4>
+
+                                <ul class="widget-list">
+                                    <li><a href="about.html">About Molla</a></li>
+                                    <li><a href="#">How to shop on Molla</a></li>
+                                    <li><a href="#">FAQ</a></li>
+                                    <li><a href="/contact">Contact us</a></li>
+                                    <li><a href="login">Log in</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="widget">
+                                <h4 class="widget-title">Customer Service</h4>
+
+                                <ul class="widget-list">
+                                    <li><a href="#">Payment Methods</a></li>
+                                    <li><a href="#">Money-back guarantee!</a></li>
+                                    <li><a href="#">Returns</a></li>
+                                    <li><a href="#">Shipping</a></li>
+                                    <li><a href="#">Terms and conditions</a></li>
+                                    <li><a href="#">Privacy Policy</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="widget">
+                                <h4 class="widget-title">My Account</h4>
+
+                                <ul class="widget-list">
+                                    <li><a href="/login">Sign In</a></li>
+                                    <li><a href="/login">View Cart</a></li>
+                                    <li><a href="/login">My Wishlist</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="container">
+
+                    <img src="assets/images/demos/demo-6/whitelogo.png" alt="Molla Logo" width="150" height="25">
+                    <p class="footer-copyright">Copyright © 2019 Glam Wear Store. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+
+    <div class="mobile-menu-overlay"></div>
+
+    <div class="mobile-menu-container">
+        <div class="mobile-menu-wrapper">
+            <span class="mobile-menu-close"><i class="icon-close"></i></span>
+
+
+
+            <nav class="mobile-nav">
+                <ul class="mobile-menu">
+                    <li class="megamenu-container ">
+                        <a href="home" class="sf-with-ul">Home</a>
+
+                    <li>
+                    <li>
+                        <a href="/shop">Shop</a>
+                    </li>
+                    <li>
+                        <a href="#">Pages</a>
+                        <ul>
+                            <li><a href="/login">Login</a></li>
+
+                        </ul>
+                    </li>
+
+
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container newsletter-popup-container mfp-hide" id="newsletter-popup-form">
+        <div class="row justify-content-center">
+            <div class="col-10">
+                <div class="row no-gutters bg-white newsletter-popup-content">
+                    <div class="col-xl-3-5col col-lg-7 banner-content-wrap">
+                        <div class="banner-content text-center">
+                            <img src="assets/images/popup/newsletter/logo.png" class="logo" alt="logo" width="60"
+                                height="15">
+                            <h2 class="banner-title">get <span>25<light>%</light></span> off</h2>
+                            <p>Subscribe to the Molla eCommerce newsletter to receive timely updates from your favorite
+                                products.</p>
+                            <form action="#">
+                                <div class="input-group input-group-round">
+                                    <input type="email" class="form-control form-control-white"
+                                        placeholder="Your Email Address" aria-label="Email Adress" required>
+                                    <div class="input-group-append">
+                                        <button class="btn" type="submit"><span>go</span></button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="register-policy-2" required>
+                                <label class="custom-control-label" for="register-policy-2">Do not show this popup
+                                    again</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2-5col col-lg-5 ">
+                        <img src="assets/images/popup/newsletter/img-1.jpg" class="newsletter-img" alt="newsletter">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="assets/js/jquery.waypoints.min.js"></script>
+    <script src="assets/js/superfish.min.js"></script>
+    <script src="assets/js/owl.carousel.min.js"></script>
+    <script src="assets/js/bootstrap-input-spinner.js"></script>
+    <script src="assets/js/jquery.plugin.min.js"></script>
+    <script src="assets/js/jquery.magnific-popup.min.js"></script>
+    <script src="assets/js/jquery.countdown.min.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/demos/demo-6.js"></script>
+</body>
+
+</html>

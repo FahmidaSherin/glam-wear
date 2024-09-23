@@ -1,0 +1,240 @@
+<%- include('../layouts/header.ejs') %>
+    <main class="main">
+        <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+            <div class="container">
+                <h1 class="page-title">My Account<span>Orders</span></h1>
+            </div>
+        </div>
+        <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/userhome">Home</a></li>
+                    <li class="breadcrumb-item"><a href="shop">Shop</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Orders</li>
+                </ol>
+            </div>
+        </nav>
+        <div class="page-content">
+            <div class="dashboard">
+                <div class="container">
+                    <div class="row">
+                        <!-- Sidebar -->
+                        <aside class="col-md-4 col-lg-3">
+                            <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/profile">Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="/orders">Orders</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/wallet">Wallet</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/address">Addresses</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/accountDetails">Account Details</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Sign Out</a>
+                                </li>
+                            </ul>
+                        </aside>
+                        <div class="col-md-8 col-lg-9">
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="tab-orders" role="tabpanel"
+                                    aria-labelledby="tab-orders-link">
+                                    <h1>Order List</h1>
+                                    <table class="table table-bordered table-striped">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th scope="col" class="text-center">Product Image</th>
+                                                <th scope="col" class="text-center">Product Name</th>
+                                                <th scope="col" class="text-center">Status</th>
+                                                <th scope="col" class="text-center">Details</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% order.forEach((order, orderIndex)=> { %>
+                                                <% order.orderedItem.forEach((item, itemIndex)=> { %>
+                                                    <tr>
+                                                        <% if (itemIndex===0) { %>
+                                                            <td class="align-middle text-center">
+                                                                <img src="/upload/<%= item.productId.image[0] %>"
+                                                                    alt="<%= item.productId.name %>"
+                                                                    class="img-thumbnail" style="max-width: 100px;">
+                                                            </td>
+                                                            <td class="align-middle text-center">
+                                                                <%= item.productId.name %>
+                                                            </td>
+
+                                                            <td class="align-middle text-center">
+                                                                <% if (order.orderStatus==='pending' ) { %>
+                                                                    <span class="badge rounded-pill alert-warning"
+                                                                        style="font-size: 16px; padding: 8px 13px;">Pending</span>
+                                                                    <% } else if (order.orderStatus==='processing' ) {
+                                                                        %>
+                                                                        <span class="badge rounded-pill alert-primary"
+                                                                            style="font-size: 16px; padding: 8px 12px;">Processing</span>
+                                                                        <% } else if (order.orderStatus==='shipped' ) {
+                                                                            %>
+                                                                            <span class="badge rounded-pill alert-info"
+                                                                                style="font-size: 16px; padding: 8px 12px;">Shipped</span>
+                                                                            <% } else if
+                                                                                (order.orderStatus==='delivered' ) { %>
+                                                                                <span
+                                                                                    class="badge rounded-pill alert-success"
+                                                                                    style="font-size: 16px; padding: 8px 12px;">Delivered</span>
+                                                                                <% } else if
+                                                                                    (order.orderStatus==='cancelled' ||
+                                                                                    order.orderStatus==='canceled' ) {
+                                                                                    %>
+                                                                                    <span
+                                                                                        class="badge rounded-pill alert-danger"
+                                                                                        style="font-size: 16px; padding: 8px 11px;">Cancelled</span>
+                                                                                    <% } else if
+                                                                                        (order.orderStatus==='returned'
+                                                                                        ) { %>
+                                                                                        <span
+                                                                                            class="badge rounded-pill alert-secondary"
+                                                                                            style="font-size: 16px; padding: 8px 11px;">Returned</span>
+                                                                                        <% } %>
+                                                            </td>
+                                                            <td class="align-middle text-center">
+                                                                <a href="javascript:void(0)"
+                                                                    class="btn btn-success btn-sm view-btn font-sm text-white"
+                                                                    data-id="<%= order._id %>">DETAILS</a>
+                                                                <% if (order.paymentStatus==='failed' ) { %>
+                                                                    <a class="btn btn-warning btn-sm retry-btn font-sm text-white"
+                                                                        onclick="retryPayment('<%= order._id %>')">RETRY</a>
+                                                                    <% } %>
+                                                            </td>
+                                                            <% } %>
+                                                    </tr>
+                                                    <% }); %>
+                                                        <% }); %>
+                                        </tbody>
+                                    </table>
+                                   
+                                    <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <% if (currentPage > 1) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=<%= limit %>">Previous</a>
+                                    </li>
+                                <% } %>
+                                <% for (let i = 1; i <= totalPages; i++) { %>
+                                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %>&limit=<%= limit %>"><%= i %></a>
+                                    </li>
+                                <% } %>
+                                <% if (currentPage < totalPages) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage + 1 %>&limit=<%= limit %>">Next</a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
+                                    <a href="category.html" class="btn btn-outline-primary-2"><span>GO SHOP</span><i
+                                            class="icon-long-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../layouts/footer.ejs') %>
+
+        </div>
+        <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+        <%- include('../layouts/mobilemenu.ejs') %>
+
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<!-- Single Details button for each order -->
+<script>
+    async function retryPayment(id) {
+        const response = await fetch('/rezoerpayRetry', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id })
+        });
+        const responseData = await response.json();
+        if (response.ok && responseData.success) {
+            const { orderId, key_id, amount } = responseData;
+
+            var options = {
+                key: key_id,
+                amount: amount * 100,
+                currency: 'INR',
+                name: 'Your Shop Name',
+                description: 'Order Payment',
+                order_id: orderId,
+                handler: async function (response) {
+
+
+
+                    const orderResponse = await fetch('/paymentStatusChange', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id
+                        })
+                    });
+
+                    window.location.reload()
+
+                },
+                theme: {
+                    color: "#3399cc"
+                }
+            };
+
+            var razorpayObject = new Razorpay(options);
+            razorpayObject.on('payment.failed', async function (response) {
+
+
+                window.location.href = '/orders'
+            });
+            razorpayObject.open();
+        } else {
+            console.error('Error in Razorpay order creation:', responseData.message);
+            swal("Error in creating payment order. Please try again later.", "", "error");
+        }
+
+    }
+</script>
+
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    document.addEventListener('click', function (event) {
+                        if (event.target.classList.contains('view-btn')) {
+                            var orderId = event.target.getAttribute('data-id');
+                            console.log("orderId", orderId);
+                            window.location.href = '/singleorder?orderId=' + orderId;
+                        }
+                    });
+                });
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+            <!-- Plugins JS File -->
+            <script src="assets/js/jquery.min.js"></script>
+            <script src="assets/js/bootstrap.bundle.min.js"></script>
+            <script src="assets/js/jquery.hoverIntent.min.js"></script>
+            <script src="assets/js/jquery.waypoints.min.js"></script>
+            <script src="assets/js/superfish.min.js"></script>
+            <script src="assets/js/owl.carousel.min.js"></script>
+            <!-- Main JS File -->
+            <script src="assets/js/main.js"></script>
+            </body>
+
+            </html>

@@ -1,0 +1,376 @@
+<%- include('../layouts/header.ejs') %>
+    <style>
+        .wallet-balance-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .wallet-heading {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .wallet-balance {
+            font-size: 30px;
+            color: #2da046;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .add-money-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .add-money-input {
+            width: 150px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            text-align: right;
+        }
+
+        .add-money-btn {
+            font-size: 16px;
+            padding: 8px 14px;
+            background-color: #c96f20;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .transaction-details-box {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .toggle-transaction-btn {
+            font-size: 16px;
+            padding: 10px 20px;
+            background-color: #6f850c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .transaction-history-section {
+            margin-top: 20px;
+            display: none;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .transaction-heading {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .transaction-table th,
+        .transaction-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .transaction-table th {
+            background-color: #f1f1f1;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .transaction-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .transaction-table tr:last-child td {
+            border-bottom: none;
+        }
+        .pagination-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.pagination-controls a {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.pagination-controls a.active {
+    background-color: #0056b3;
+}
+
+.pagination-controls a:hover {
+    background-color: #0056b3;
+}
+    </style>
+
+
+    <main class="main">
+        <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+            <div class="container">
+                <h1 class="page-title">My Account<span>Wallet</span></h1>
+            </div>
+        </div>
+
+        <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/userhome">Home</a></li>
+                    <li class="breadcrumb-item"><a href="shop">Shop</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Wallet</li>
+                </ol>
+            </div>
+        </nav>
+
+        <div class="page-content">
+            <div class="dashboard">
+                <div class="container">
+                    <div class="row">
+                        <aside class="col-md-4 col-lg-3">
+                            <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/profile">Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/orders">Orders</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="/wallet">Wallet</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/address">Addresses</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/accountDetails">Account Details</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Sign Out</a>
+                                </li>
+                            </ul>
+                        </aside>
+
+                        <section class="col-md-8 col-lg-9">
+                            <div class="wallet-balance-section">
+                                <h1 class="wallet-heading">Wallet Balance</h1>
+                                <p class="wallet-balance">
+                                    ₹ <%= wallet ? wallet.balance.toFixed(2) : '0.00' %>
+                                </p>
+                                <form id="addWalletForm">
+                                    <div class="add-money-container">
+                                        <input type="hidden" name="user" id="userID" value="<%= userID %>">
+                                        <!-- Hidden input for user ID -->
+                                        <input type="number" class="form-control add-money-input" id="amount"
+                                            name="amount" placeholder="Enter amount" required>
+                                        <button type="button" class="btn btn-success add-money-btn"
+                                            onclick="razorPay()">Add Money</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                            <div class="transaction-details-box">
+                                <button class="btn btn-info toggle-transaction-btn">View Transaction History</button>
+                                <div class="transaction-history-section collapse">
+                                    <h2 class="transaction-heading">Transaction History</h2>
+                                    <table class="table transaction-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Amount</th>
+                                                <th>Method</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (wallet && wallet.transaction.length > 0) { %>
+                                                <% wallet.transaction.forEach(transaction => { %>
+                                                    <tr>
+                                                        <td><%= transaction.date.toLocaleDateString() %></td>
+                                                        <td>₹ <%= transaction.amount.toFixed(2) %></td>
+                                                        <td>
+                                                            <%= transaction.transactionsMethod %>
+                                                            <% if (transaction.transactionsMethod === 'Remarks' && transaction.remarks) { %>
+                                                                - <%= transaction.remarks %>
+                                                            <% } %>
+                                                        </td>
+                                                    </tr>
+                                                <% }) %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="3">No transactions found</td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
+                            
+                                    <!-- Pagination controls -->
+                                    <div class="pagination-controls">
+                                        <% if (currentPage > 1) { %>
+                                            <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>">Previous</a>
+                                        <% } %>
+                            
+                                        <% for (let i = 1; i <= totalPages; i++) { %>
+                                            <a href="?page=<%= i %>&limit=<%= limit %>" class="<%= i === currentPage ? 'active' : '' %>">
+                                                <%= i %>
+                                            </a>
+                                        <% } %>
+                            
+                                        <% if (currentPage < totalPages) { %>
+                                            <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>">Next</a>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <%- include('../layouts/footer.ejs') %>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script>
+            async function razorPay() {
+                const userID = document.getElementById('userID').value;
+                const amount = parseFloat(document.getElementById('amount').value);
+
+                if (isNaN(amount) || amount <= 0) {
+                    swal("Please enter a valid amount", "", "warning");
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/razrpywllt', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ user: userID, amount: amount })
+                    });
+
+                    const responseData = await response.json();
+
+                    if (response.ok && responseData.success) {
+                        const { orderId, key_id, amount } = responseData;
+
+                        var options = {
+                            key: key_id,
+                            amount: amount,
+                            currency: 'INR',
+                            name: 'Your Shop Name',
+                            description: 'Wallet Top-Up',
+                            order_id: orderId,
+                            handler: function (response) {
+                                verifyPayment(response);
+                            },
+                            theme: {
+                                color: "#3399cc"
+                            }
+                        };
+
+                        var razorpayObject = new Razorpay(options);
+                        razorpayObject.on('payment.failed', function (response) {
+                            swal("Payment failed. Please try again.", "", "error");
+                        });
+                        razorpayObject.open();
+                    } else {
+                        console.error('Error in Razorpay order creation:', responseData.message);
+                        swal("Error in creating payment order. Please try again later.", "", "error");
+                    }
+                } catch (error) {
+                    console.error('Error in processing Razorpay payment:', error);
+                    swal("Error in processing payment. Please try again later.", "", "error");
+                }
+            }
+
+            async function verifyPayment(paymentResponse) {
+                try {
+                    const response = await fetch('/vrfywllt', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            razorpay_order_id: paymentResponse.razorpay_order_id,
+                            razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                            razorpay_signature: paymentResponse.razorpay_signature
+                        })
+                    });
+
+                    const verificationResponse = await response.json();
+
+                    if (verificationResponse.success) {
+                        const userID = document.getElementById('userID').value;
+                        const amount = document.getElementById('amount').value;
+
+                        const addWalletResponse = await fetch('/addWallet', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                user: userID,
+                                amount: amount
+                            })
+                        });
+
+                        if (!addWalletResponse.ok) {
+                            console.error('Error adding money to wallet:', addWalletResponse.statusText);
+                            swal("Error adding money to wallet. Please try again later.", "", "error");
+                        } else {
+                            let success = await addWalletResponse.json();
+                            swal("Money added successfully!", "", "success");
+                        }
+                    } else {
+                        swal("Payment verification failed", "", "error");
+                    }
+                } catch (error) {
+                    console.error('Error in verifying payment:', error);
+                    swal("Payment verification failed", "", "error");
+                }
+            }
+
+        </script>
+
+        <script>
+            document.querySelector('.toggle-transaction-btn').addEventListener('click', function () {
+                const transactionSection = document.querySelector('.transaction-history-section');
+                if (transactionSection.style.display === 'none' || transactionSection.style.display === '') {
+                    transactionSection.style.display = 'block';
+                    this.textContent = 'Hide Transaction History';
+                } else {
+                    transactionSection.style.display = 'none';
+                    this.textContent = 'View Transaction History';
+                }
+            });
+        </script>
+        </body>
+
+        </html>

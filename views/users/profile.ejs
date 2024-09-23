@@ -1,0 +1,114 @@
+<%- include('../layouts/header.ejs') %>
+
+
+    <main class="main">
+        <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+            <div class="container">
+                <h1 class="page-title">My Account<span>Profile</span></h1>
+            </div>
+        </div>
+        <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/userhome">Home</a></li>
+                    <li class="breadcrumb-item"><a href="shop">Shop</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Profile</li>
+                </ol>
+            </div>
+        </nav>
+        <div class="page-content">
+            <div class="dashboard">
+                <div class="container">
+                    <div class="row">
+                        <aside class="col-md-4 col-lg-3">
+                            <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="tab-dashboard-link" href="/profile"
+                                        aria-selected="true">Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="tab-orders-link" href="/orders" aria-controls="tab-orders"
+                                        aria-selected="false">Orders</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="tab-wallet-link" href="/wallet" aria-controls="tab-wallet"
+                                        aria-selected="false">Wallet</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="tab-address-link" href="/address"
+                                        aria-controls="tab-address" aria-selected="false">Addresses</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="tab-account-link" href="/accountDetails"
+                                        aria-controls="tab-account" aria-selected="false">Account Details</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Sign Out</a>
+                                </li>
+                            </ul>
+                        </aside>
+
+                        <div class="col-md-8 col-lg-9">
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel"
+                                    aria-labelledby="tab-dashboard-link">
+                                    <h2>Profile Details</h2>
+                                    <div class="profile-info" id="profile-info">
+                                        <p>Name: <%= user.name %>
+                                        </p>
+                                        <p>Email: <%= user.email %>
+                                        </p>
+                                        <p>Phone: <%= user.mobile %>
+                                        </p>
+                                    </div>
+                                    <div class="profile-actions">
+                                        <a href="#tab-orders" class="action-link">View Recent Orders</a>
+                                        <a href="#tab-address" class="action-link">Manage Addresses</a>
+                                        <a href="#tab-account" class="action-link">Edit Account Details</a>
+                                        <a href="/logout" class="logout-link">Log out</a>
+                                    </div>
+                                    <div>
+                                        <a href="editProfile"> <button type="submit" class="btn btn-primary">Edit
+                                                Profile</button></a>
+                                        <button type="submit" onclick="copyCode('<%=user._id%>')"
+                                            data-user="<%=user._id%>" class="btn btn-primary">Refral Code</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </main>
+
+    <%- include('../layouts/footer.ejs') %>
+
+        </div>
+        <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+        <%- include('../layouts/mobilemenu.ejs') %>
+
+            <script>
+                function copyCode(id) {
+                    navigator.clipboard.writeText("http://localhost:3000/register?ref=" + id).then(() => {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: "Code copied: " + id,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                    }).catch(e => {
+                        console.log(e.message);
+                    });
+                }
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script src="assets/js/jquery.min.js"></script>
+            <script src="assets/js/bootstrap.bundle.min.js"></script>
+            <script src="assets/js/jquery.hoverIntent.min.js"></script>
+            <script src="assets/js/jquery.waypoints.min.js"></script>
+            <script src="assets/js/superfish.min.js"></script>
+            <script src="assets/js/owl.carousel.min.js"></script>
+            <script src="assets/js/main.js"></script>
+            </body>
+
+            </html>

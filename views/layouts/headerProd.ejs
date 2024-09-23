@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- molla/product.html  22 Nov 2019 09:54:50 GMT -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Glam Wear - Bootstrap eCommerce Template</title>
+    <meta name="keywords" content="HTML5 Template">
+    <meta name="description" content="Molla - Bootstrap eCommerce Template">
+    <meta name="author" content="p-themes">
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/icons/apple-touch-icon.png">
+ 
+    <meta name="apple-mobile-web-app-title" content="Molla">
+    <meta name="application-name" content="Molla">
+    <meta name="msapplication-TileColor" content="#cc9966">
+    <meta name="msapplication-config" content="/assets/images/icons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/plugins/owl-carousel/owl.carousel.css">
+    <link rel="stylesheet" href="/assets/css/plugins/magnific-popup/magnific-popup.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/plugins/nouislider/nouislider.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <style>
+        .bg-yellow {
+            background-color: rgb(33, 6, 87);
+        }
+
+        .bg-green {
+            background-color: green;
+        }
+
+        .swal-toast-title {
+            color: white;
+        }
+
+        .bg-red {
+            background-color: red;
+        }
+
+        .btn-cart {
+            font-size: 20px;
+        }
+
+        .out-of-stock {
+            color: red;
+        }
+
+        .in-stock {
+            color: green;
+        }
+
+        .product-price {
+            font-size: 1.2em;
+        }
+
+        .original-price {
+            color: red;
+            text-decoration: line-through;
+            margin-right: 0.5em;
+        }
+
+        .discounted-price {
+            color: rgb(92, 93, 92);
+
+        }
+    </style>
+    <div class="page-wrapper">
+        <header class="header">
+
+
+            <div class="header-middle sticky-header">
+                <div class="container">
+                    <div class="header-left">
+                        <button class="mobile-menu-toggler">
+                            <span class="sr-only">Toggle mobile menu</span>
+                            <i class="icon-bars"></i>
+                        </button>
+
+                        <a href="index.html" class="logo"></a>
+                            <img src="/assets/images/glamnew.png" alt="Molla Logo" width="170" height="50">
+                        
+
+                        <nav class="main-nav">
+                            <ul class="menu sf-arrows">
+                                <li class="megamenu-container ">
+                                    <a href="/" class="sf-with-ul">Home</a>
+                                </li>
+                                <li>
+                                    <a href="/shop" class="sf-with-ul">Shop</a>
+                                </li>
+
+                                <li>
+                                    <a href="#" class="sf-with-ul">Pages</a>
+                                    <ul>
+                                        <li><a href="/logout">Logout</a></li>
+                                    </ul>
+
+                                </li>
+
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <div class="header-right">
+                        <div class="header-search">
+                            <a href="#" class="search-toggle" role="button" title="Search"><i
+                                    class="icon-search"></i></a>
+                            <form action="/search" method="get">
+                                <div class="header-search-wrapper">
+                                    <label for="q" class="sr-only">Search</label>
+                                    <input type="search" class="form-control" name="q" id="q"
+                                        placeholder="Search for products..." required>
+                                </div>
+                            </form>
+                        </div>
+
+
+                        <div class="dropdown cart-dropdown">
+                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false" data-display="static">
+                                <a href="/cart"> <i class="btn-cart fas fa-shopping-cart"></i> </a>
+                                <% if (cartCount !==undefined && cartCount> 0) { %>
+                                    <span id="cartItemCount" class="cart-count">
+                                        <%= cartCount %>
+                                    </span>
+                                    <% } %>
+                            </a>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You for Your Purchase</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: #343a40;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 2.5em;
+    }
+
+    h2 {
+        color: #495057;
+        font-size: 1.75em;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    p {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #6c757d;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    li {
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #e9ecef;
+        padding: 10px 0;
+    }
+
+    img {
+        border-radius: 8px;
+        margin-right: 15px;
+        width: 150px; 
+        height: 150px;
+        object-fit: cover;
+    }
+
+    .fallback-image {
+        width: 150px; 
+        height: 150px;
+        background-color: #e9ecef;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+        font-size: 16px;
+    }
+
+    .cta-button {
+        display: inline-block;
+        background-color: #007bff;
+        color: #ffffff;
+        padding: 12px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 18px;
+        text-align: center;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        margin: 20px auto;
+        display: block;
+        width: fit-content;
+    }
+
+    .cta-button:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .social-icons {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .social-icons a {
+        display: inline-block;
+        margin: 0 12px;
+        color: #6c757d;
+        font-size: 24px;
+        transition: color 0.3s ease;
+    }
+
+    .social-icons a:hover {
+        color: #007bff;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Thank You for Your Purchase!</h1>
+        <h2>Ordered Items:</h2>
+        <ul>
+            <% if (order && order.orderedItem.length > 0) { %>
+                <% order.orderedItem.forEach(item => { %>
+                    <li>
+                        <% if (item.productId && item.productId.image && item.productId.image.length > 0) { %>
+                            <img src="/upload/<%= item.productId.image[0] %>" alt="Product Image">
+                        <% } else { %>
+                            <div class="fallback-image">No Image</div>
+                        <% } %>
+                        <div>
+                            <strong>Product Name:</strong> <%= item.productId.name %><br>
+                            <strong>Quantity:</strong> <%= item.quantity %>
+                        </div>
+                    </li>
+                <% }); %>
+            <% } else { %>
+                <p>No items in this order.</p>
+            <% } %>
+        </ul>
+        <a href="/shop" class="cta-button">Continue Shopping</a>
+        <div class="social-icons">
+            <a href="#" title="Follow us on Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="#" title="Follow us on Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" title="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
+        </div>
+    </div>
+</body>
+</html>

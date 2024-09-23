@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+</head>
+
+<body>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .otp-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .otp-box {
+            width: 400px;
+            height: 40px;
+            text-align: center;
+            padding: 10px;
+            font-size: 20px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .otp-box:focus {
+            border-color: #4CAF50;
+        }
+
+        button {
+            width: 100px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <div class="container">
+        <h1>OTP Verification</h1>
+        <% if (error.length>0) { %>
+            <p class="error">
+                <%= error %>
+            </p>
+            <% } %>
+                <form id="otpForm" action="/verify-otp" method="post">
+                    <div class="otp-inputs">
+                        <input name="otp" type="text" id="otp1" maxlength="6" class="otp-box" />
+                    </div>
+
+                    <button type="submit">Verify OTP</button>
+                </form>
+                <form action="resend-otp" method="post">
+                    <div id="timer-container">
+                        <p id="timer"></p>
+                        <button id="resend-btn" onclick="resendOTP()" style="display:none;">Resend OTP</button>
+                    </div>
+                </form>
+    </div>
+
+    <script>
+
+        const timerDuration = 30;
+
+
+        function startTimer() {
+            let timeLeft = timerDuration;
+            const timerElement = document.getElementById("timer");
+            const resendButton = document.getElementById('resend-btn')
+
+            const countdown = setInterval(() => {
+                timerElement.textContent = `Resend OTP in ${timeLeft} seconds`;
+
+                timeLeft--;
+
+                if (timeLeft < 0) {
+                    clearInterval(countdown);
+                    resendButton.style.display = "block"
+                    document.getElementById("resend-btn").disabled = false;
+                    timerElement.textContent = "Resend OTP"; 6
+                }
+            }, 1000);
+        }
+        function resendOTP() {
+
+            alert("Resending OTP...");
+        }
+
+        window.onload = startTimer;
+    </script>
+</body>
+
+</html>

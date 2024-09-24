@@ -77,6 +77,7 @@
                                     </thead>
                                     <tbody>
                                         <% let subtotal=0; %>
+                                        <% let discount = 0; %>
                                             <% cart.forEach(function(cartItem) { %>
                                                 <% let price=cartItem.productId.offerPrice || cartItem.productId.price;
                                                     %>
@@ -111,11 +112,10 @@
                                                                     <td>
                                                                         <del id="crossed-original-price"
                                                                             style="text-decoration: line-through; display: none;">
-                                                                            ₹<%= totalPrice.toFixed(2) %>
+                                                                            ₹<%= (subtotal + 100 - discount).toFixed(2) %>
                                                                         </del>
                                                                         <br>
-                                                                        <span id="final-amount">₹<%= (finalAmount +
-                                                                                100).toFixed(2) %></span>
+                                                                        <span id="final-amount">₹<%= (subtotal + 100 - discount).toFixed(2) %></span>
                                                                     </td>
                                                                     <input type="hidden" id="walletBalance"
                                                                         value="<%= walletBalance.toFixed(2) %>">
@@ -295,7 +295,7 @@
 
 
                     <script>
-                        // PlaceOrder
+                       
                         const placeorder = document.getElementById('proceedButton');
                         placeorder.addEventListener('click', async function (e) {
                             e.preventDefault();
@@ -583,10 +583,13 @@
                                         document.getElementById('final-amount').innerText = `₹${data.finalAmount.toFixed(2)}`;
                                         document.getElementById('final-amount-hidden').value = data.finalAmount.toFixed(2);
 
+                                        // Update the discount amount to show the savings
                                         document.getElementById('discount-amount').innerText = `You saved: ₹${data.discountValue.toFixed(2)}`;
 
                                         document.getElementById('remove-coupon').style.display = 'inline';
                                         document.getElementById('coupon-code').disabled = true;
+                                    
+
                                     } else {
                                         console.error('Unexpected response data:', data);
                                         document.getElementById('coupon-message').innerText = 'An error occurred. Please try again.';

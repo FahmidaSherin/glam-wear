@@ -126,7 +126,6 @@
                             <% } else { %>
                                 <button id="return-btn" data-id="<%= orderDetails._id %>" data-payment-method="<%= orderDetails.paymentMethod %>" data-bs-toggle="modal" data-bs-target="#returnReasonModal">Return Order</button>
                             <% } %>
-                            <!-- <a href="/download-invoice?orderId=<%= orderDetails._id %>" class="btn btn-primary">Download Invoice</a> -->
                             <a href="#" class="btn btn-primary" onclick="checkOrderStatus('<%= orderDetails._id %>')">Download Invoice</a>
 
                         </div>
@@ -391,34 +390,6 @@
         });
     });
     </script>
-    <script>
-        async function checkOrderStatus(orderId) {
-            try {
-                const response = await fetch(`/api/order-status?orderId=${orderId}`);
-                const data = await response.json();
-        
-                if (data.status === 'cancelled') {
-                    // Show SweetAlert if the order is cancelled
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Cannot Download Invoice',
-                        text: 'You cannot download the invoice for a canceled order.',
-                        confirmButtonText: 'OK'
-                    });
-                } else {
-                    window.location.href = `/download-invoice?orderId=${orderId}`;
-                }
-            } catch (error) {
-                console.error('Error checking order status:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'An error occurred while checking the order status.',
-                    confirmButtonText: 'OK'
-                });
-            }
-        }
-        </script>
 
 <script>
     async function checkOrderStatus(orderId) {
@@ -433,8 +404,22 @@
                     text: 'You cannot download the invoice for a canceled order.',
                     confirmButtonText: 'OK'
                 });
-            } else {
+            } else if (data.status === 'returned') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Cannot Download Invoice',
+                    text: 'Invoices cannot be downloaded for returned orders.',
+                    confirmButtonText: 'OK'
+                });
+            } else if (data.status === 'delivered') {
                 window.location.href = `/download-invoice?orderId=${orderId}`;
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Invoice Not Available',
+                    text: 'Invoices can only be downloaded for delivered orders.',
+                    confirmButtonText: 'OK'
+                });
             }
         } catch (error) {
             console.error('Error checking order status:', error);
@@ -446,7 +431,8 @@
             });
         }
     }
-    </script>
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>

@@ -25,9 +25,7 @@ const adminVerify = async (req, res) => {
 
         const email = req.body.email;
         const password = req.body.password;
-        console.log(email);
         const userData = await User.findOne({ email: email })
-        console.log('userData', userData)
         if (userData) {
 
             const passwordMatch = await bcrypt.compare(password, userData.password)
@@ -63,26 +61,21 @@ const adminVerify = async (req, res) => {
 const loadDashboard = async (req, res) => {
     try {
         const userData = await User.findById(req.session.admin_id);
-        console.log('userData in loadDashboard',userData);
-        
+
         const { top10Products, top10Categories } = await top10ProductsCategories();
-        console.log('top10ProductsCategories in loadDashboard',top10ProductsCategories);
 
 
         const orders = await Order.find();
 
 
         const revenue = orders.reduce((total, order) => total + order.totalAmount, 0);
-        console.log('revenue in loadDashboard',revenue);
 
         const salesCount = orders.length;
-        console.log('salesCount in loadDashboard',salesCount);
 
         const currentDate = new Date();
         currentDate.setHours(0, 0, 0, 0);
         let nextDay = new Date(currentDate);
         nextDay.setDate(currentDate.getDate() + 1);
-        console.log('currentDate in loadDashboard',currentDate);
 
         const dailyOrders = await Order.find({
             shippingDate: {
@@ -90,10 +83,8 @@ const loadDashboard = async (req, res) => {
                 $lte: nextDay
             }
         });
-        console.log('dailyOrders in loadDashboard',dailyOrders);
 
         const dailyRevenue = dailyOrders.reduce((total, order) => total + order.totalAmount, 0);
-        console.log('dailyRevenue in loadDashboard',dailyRevenue);
 
         res.render('dashboard', {
             admin: userData,
@@ -114,16 +105,13 @@ const loadDashboard = async (req, res) => {
 const graph = async (req, res) => {
     try {
         const { value } = req.query;
-        console.log('Graph value:', value); 
         let pipeline = [];
 
         if (value === 'monthly') {
 
             const startOfYear = new Date(new Date().getFullYear(), 0, 1);
-        console.log('startOfYear inthe graph:', startOfYear); 
 
             const endOfYear = new Date(new Date().getFullYear(), 11, 31);
-            console.log('endOfYear inthe graph:', endOfYear); 
 
 
 
@@ -137,7 +125,7 @@ const graph = async (req, res) => {
                     $group: {
                         _id: { $month: '$shippingDate' },
                         month: { $first: { $month: '$shippingDate' } },
-                        monthlyTotalAmount: { $sum: '$finalAmount' }, 
+                        monthlyTotalAmount: { $sum: '$finalAmount' },
                         monthlyOrderCount: { $sum: 1 }
                     }
                 },
@@ -147,7 +135,6 @@ const graph = async (req, res) => {
                     }
                 }
             ];
-            console.log('Pipeline in monthly graph:', pipeline);
 
 
 
@@ -164,8 +151,8 @@ const graph = async (req, res) => {
                 },
                 {
                     $group: {
-                        _id: { $year: '$shippingDate' }, 
-                        yearlyTotalAmount: { $sum: '$finalAmount' }, 
+                        _id: { $year: '$shippingDate' },
+                        yearlyTotalAmount: { $sum: '$finalAmount' },
                         yearlyOrderCount: { $sum: 1 }
                     }
                 },
@@ -175,8 +162,8 @@ const graph = async (req, res) => {
                     }
                 }
             ];
-        }else if (value === 'weekly') {
-            // Weekly aggregation
+        } else if (value === 'weekly') {
+
             const startOfYear = new Date(new Date().getFullYear(), 0, 1);
             const endOfYear = new Date(new Date().getFullYear(), 11, 31);
 
@@ -188,7 +175,7 @@ const graph = async (req, res) => {
                 },
                 {
                     $group: {
-                        _id: { $isoWeek: '$shippingDate' }, // Group by ISO week
+                        _id: { $isoWeek: '$shippingDate' },
                         week: { $first: { $isoWeek: '$shippingDate' } },
                         weeklyTotalAmount: { $sum: '$finalAmount' },
                         weeklyOrderCount: { $sum: 1 }
@@ -201,9 +188,7 @@ const graph = async (req, res) => {
                 }
             ];
         }
-        console.log('Pipeline in  yearly graph:', pipeline);
         const data = await Order.aggregate(pipeline);
-        console.log('Graph data:', data);
         res.json(data);
     } catch (error) {
         console.error('Error found in graph', error);
@@ -212,64 +197,71 @@ const graph = async (req, res) => {
 };
 
 
-const top10ProductsCategories = async (req,res) =>{
-    try{
+const top10ProductsCategories = async (req, res) => {
+    try {
         const top10Products = await Order.aggregate([
             { $unwind: "$orderedItem" },
             {
-              $group: {
-                _id: "$orderedItem.productId",
-                totalSold: { $sum: "$orderedItem.quantity" },
-              },
+                $group: {
+                    _id: "$orderedItem.productId",
+                    totalSold: { $sum: "$orderedItem.quantity" },
+                },
             },
             {
-              $lookup: {
-                from: "products", 
-                localField: "_id", 
-                foreignField: "_id", 
-                as: "productDetails",
-              },
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "productDetails",
+                },
             },
             { $unwind: "$productDetails" },
             {
-              $project: {
-                _id: 1,
-                count: "$totalSold",
-                name: "$productDetails.name", 
-                image: "$productDetails.image", 
-              },
+                $project: {
+                    _id: 1,
+                    count: "$totalSold",
+                    name: "$productDetails.name",
+                    image: "$productDetails.image",
+                },
             },
             { $sort: { count: -1 } },
             { $limit: 10 },
-          ]);
-console.log('top10Products in top10ProductsCategories ',top10Products);
+        ]);
 
         const top10Categories = await Order.aggregate([
             { $unwind: "$orderedItem" },
-            { $lookup: { 
-                from: "products", 
-                localField: "orderedItem.productId", 
-                foreignField: "_id", 
-                as: "product" 
-            }},
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "orderedItem.productId",
+                    foreignField: "_id",
+                    as: "product"
+                }
+            },
             { $unwind: "$product" },
-            { $group: {
-                _id: "$product.category",
-                totalSold: { $sum: "$orderedItem.quantity" }
-            }},
-            { $lookup: { 
-                from: "categories", 
-                localField: "_id", 
-                foreignField: "_id", 
-                as: "category" 
-            }},
+            {
+                $group: {
+                    _id: "$product.category",
+                    totalSold: { $sum: "$orderedItem.quantity" }
+                }
+            },
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "category"
+                }
+            },
             { $unwind: "$category" },
-            { $project: {
-                categoryName: "$category.name",
-                count: "$totalSold"
-            }},
+            {
+                $project: {
+                    categoryName: "$category.name",
+                    count: "$totalSold"
+                }
+            },
             { $sort: { count: -1 } },
-            { $limit: 10 } 
+            { $limit: 10 }
         ]);
         return { top10Products, top10Categories };
     } catch (error) {
@@ -287,11 +279,12 @@ const listUsers = async (req, res) => {
         const users = await User.find().sort({ _id: -1 }).skip(skip).limit(limit);
 
         const totalUsers = await User.countDocuments();
-        res.render('custommer', { users, currentPage: page,
+        res.render('custommer', {
+            users, currentPage: page,
             totalPages: Math.ceil(totalUsers / limit),
             totalUsers,
             limit
-         });
+        });
     } catch (error) {
         console.log(error.message);
     }
@@ -353,7 +346,6 @@ const updatedCategory = async (req, res) => {
         const categoryId = req.query.categoryId
         const category = await Category.findById({ categoryId })
         res.render('categories', { category: category })
-        console.log('categories', category);
 
     } catch (error) {
         console.log(error.message);
@@ -375,7 +367,6 @@ const orderDetails = async (req, res) => {
             .sort({ _id: -1 })
             .skip(skip)
             .limit(limit);
-        console.log('orders from orderDetail in adminController:', orders);
 
         const totalOrders = await Order.countDocuments();
 
@@ -384,22 +375,23 @@ const orderDetails = async (req, res) => {
             const formattedDate = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0')
 
             const discountAmount = order.discountAmount || 0;
-            const shippingCharge = order.shippingCharge || 0; 
+            const shippingCharge = order.shippingCharge || 0;
             const finalAmount = order.orderAmount - discountAmount + shippingCharge;
             return {
                 ...order.toObject(),
                 formattedCreatedAt: formattedDate,
                 discountAmount: discountAmount,
                 finalAmount: finalAmount,
-                shippingCharge: shippingCharge ,
-                orderUniqueId: order.orderUniqueId 
+                shippingCharge: shippingCharge,
+                orderUniqueId: order.orderUniqueId
             }
         })
-        res.render('order', { orderDetails: formattedOrders,
+        res.render('order', {
+            orderDetails: formattedOrders,
             currentPage: page,
             totalPages: Math.ceil(totalOrders / limit),
-            limit 
-         })
+            limit
+        })
     } catch (error) {
         console.log(error.message);
     }
@@ -414,29 +406,27 @@ const singleView = async (req, res) => {
             .populate('deliveryAddress');
 
         orderDetails.orderedItem = orderDetails.orderedItem.map(item => {
-            let price = parseFloat(item.productId.price) || 0; 
-            const quantity = parseInt(item.quantity) || 0; 
+            let price = parseFloat(item.productId.price) || 0;
+            const quantity = parseInt(item.quantity) || 0;
 
             if (item.productId.offerPrice) {
-                price = parseFloat(item.productId.offerPrice); 
+                price = parseFloat(item.productId.offerPrice);
             }
 
             const finalAmountForItem = price * quantity;
 
-            console.log('Price:', price, 'Quantity:', quantity, 'Final Amount for Item:', finalAmountForItem);
 
             item.finalAmountForItem = finalAmountForItem;
             return item;
         });
 
         const totalOrderAmount = orderDetails.orderedItem.reduce((total, item) => {
-            console.log('Current Item Final Amount:', item.finalAmountForItem);
             return total + item.finalAmountForItem;
         }, 0);
 
         const shippingCharge = 100
-        
-       let finalAmount = totalOrderAmount + shippingCharge;
+
+        let finalAmount = totalOrderAmount + shippingCharge;
 
         let discount = 0;
         if (orderDetails.coupons) {
@@ -451,16 +441,12 @@ const singleView = async (req, res) => {
             }
         }
 
-        console.log('Total Order Amount in singleView:', totalOrderAmount);
-        console.log('Shipping Charge in singleView:', shippingCharge);
-        console.log('Discount in singleView:', discount);
-        console.log('Final Amount in singleView:', finalAmount);
 
-        res.render('singleView', { 
+        res.render('singleView', {
             orderDetails: orderDetails,
             finalAmount: finalAmount,
-            discount: discount ,
-            shippingCharge: shippingCharge 
+            discount: discount,
+            shippingCharge: shippingCharge
         });
     } catch (error) {
         console.log(error.message);
@@ -473,60 +459,19 @@ const singleView = async (req, res) => {
 
 
 
-// const updateStatus = async (req, res) => {
-//     try {
-//         const { status, orderId } = req.body;
 
-//         console.log('status', status);
-//         console.log('orderId', orderId);
-
-//         const updateData = {
-//             orderStatus: status,
-//         };
-
-//         if (status === 'delivered') {
-//             updateData.deliveryDate = new Date();
-//             updateData.paymentStatus = 'paid'; 
-//         }
-
-
-//         const orderStatus = await Order.updateOne(
-//             {
-//                 _id: orderId,
-//             },
-//             {
-//                 $set: { 'orderStatus': status }
-//             }
-//         );
-//         console.log('orderStatus', orderStatus);
-
-//         console.log('successfully updated the order status');
-//         res.status(200).json({ success: true });
-//     } catch (error) {
-//         console.log('Error in updating order status:', error);
-//         res.status(500).json({ success: false });
-//     }
-// };
-
-
-//Logout
 
 
 const updateStatus = async (req, res) => {
     try {
         const { status, orderId } = req.body;
 
-        console.log('status', status);
-        console.log('orderId', orderId);
-
-        // Find the order to get the current payment method
         const order = await Order.findById(orderId);
         if (!order) {
             return res.status(404).json({ success: false, message: 'Order not found' });
         }
 
         if (order.orderStatus === 'delivered' && status !== 'returned') {
-            // If the order is already delivered and the new status is not 'returned', do not allow further status changes
             return res.status(400).json({ success: false, message: 'Cannot change the status of a delivered order, except to "returned".' });
         }
 
@@ -534,20 +479,16 @@ const updateStatus = async (req, res) => {
             orderStatus: status,
         };
 
-        // Check if the status is 'delivered' and the payment method is 'cashOnDelivery'
         if (status === 'delivered' && order.paymentMethod === 'cash_on_delivery') {
             updateData.deliveryDate = new Date();
-            updateData.paymentStatus = 'paid'; 
+            updateData.paymentStatus = 'paid';
         }
 
-        // Update the order status and payment status if applicable
         const orderStatus = await Order.updateOne(
             { _id: orderId },
             { $set: updateData }
         );
 
-        console.log('orderStatus', orderStatus);
-        console.log('successfully updated the order status');
 
         res.status(200).json({ success: true });
     } catch (error) {

@@ -1,33 +1,30 @@
 
-const User= require ('../model/userModel')
+const User = require('../model/userModel')
 
-const isLogin=async(req,res,next)=>{
-    try{
+const isLogin = async (req, res, next) => {
+    try {
 
-        if(req.session.user_id){
+        if (req.session.user_id) {
             next()
         }
-        else{
+        else {
             res.redirect('/home')
         }
 
-    }catch(error){
+    } catch (error) {
         console.log(error.message);
     }
 }
 
-const isLogout=async(req,res,next)=>{
-    try{
-console.log('helosf isLogout')
-        if(req.session.user_id){
+const isLogout = async (req, res, next) => {
+    try {
+        if (req.session.user_id) {
             res.redirect('/userhome')
-            console.log('in is_logout')
 
-    } else {
-        console.log('else');
-        next()
-    }
-    }catch(error){
+        } else {
+            next()
+        }
+    } catch (error) {
         console.log(error.message);
     }
 
@@ -36,17 +33,15 @@ console.log('helosf isLogout')
 
 const isBlocked = async (req, res, next) => {
     try {
-        console.log('hello isBlocked');
         const userData = await User.findOne({ _id: req.session.user_id });
         if (!userData) {
             next();
         } else {
-            console.log(userData.is_blocked);
             if (userData.is_blocked) {
-                req.session.user_id = null; 
-                res.redirect('/home'); 
+                req.session.user_id = null;
+                res.redirect('/home');
             } else {
-                next(); 
+                next();
             }
         }
     } catch (error) {
@@ -55,20 +50,20 @@ const isBlocked = async (req, res, next) => {
     }
 };
 
- 
-const isError = async(req,res,next) => {
+
+const isError = async (req, res, next) => {
     try {
-        if(req.session.user_id){
+        if (req.session.user_id) {
             res.render('users/error')
-        }else {
+        } else {
             next()
         }
     } catch (error) {
-        
+
     }
 }
 
-module.exports={
+module.exports = {
     isLogin,
     isLogout,
     isBlocked,

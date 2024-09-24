@@ -18,18 +18,6 @@ const Wishlist = require('../model/wishlistModel')
 const passport = require('passport')
 
 
-// user_route.use(express.static('public'))
-
-// const storage=multer.diskStorage({
-//     destination:function(req,file,cb){
-//         const name=Date.now()+'-'+file.originalname;
-//         cb(null,name)
-//     }
-// })
-
-// const upload=multer({storage:storage})
-
-
 const userCon = require('../controller/userCon')
 const addressCon = require('../controller/addressCon');
 
@@ -37,7 +25,6 @@ user_route.get('/',auth.isLogout,userCon.loadHome)
 user_route.get('/home',auth.isLogout,userCon.loadHome)
 user_route.get('/userhome',auth.isLogin,auth.isBlocked,userCon.loadHome)
 
-// google authentication
 user_route.get('/auth/google', googleLogin.googleAuth);
 user_route.get("/auth/google/callback", googleLogin.googleCallback, googleLogin.setupSession);
 

@@ -13,7 +13,6 @@ const path = require('path')
 const orderList = async (req, res) => {
     try {
         const userId = req.session.user_id;
-        console.log('userId', userId);
         const page = parseInt(req.query.page) || 1; // Current page
         const limit = parseInt(req.query.limit) || 5; // Number of orders per page
         const skip = (page - 1) * limit;
@@ -25,7 +24,6 @@ const orderList = async (req, res) => {
         const order = await Order.find({ userId: userId }).populate('orderedItem.productId').sort({ createdAt: -1 }).skip(skip)
         .limit(limit);
         const users = await User.findOne({ _id: userId });
-        console.log('users', users);
         res.render('users/orders', { order: order, users: users, currentPage: page,
             totalPages: totalPages,limit: limit });
     } catch (error) {
@@ -35,30 +33,6 @@ const orderList = async (req, res) => {
 };
 
 
-// const viewOrder = async (req, res) => {
-
-//     try {
-//         const userId = req.session.user_id
-//         const user = await User.findOne({ _id: userId })
-//         const orderId = req.query.orderId.replace(/\s+/g, '');
-//         const orderDetails = await Order.findOne({ _id: orderId }).populate('userId')
-//             .populate({ path: 'orderedItem.productId', model: 'Product' })
-//             .populate('deliveryAddress')
-//             .populate('coupons')
-
-//             console.log('OrderDetails:::::::::',orderDetails);
-
-//             const shippingCharge = 100
-//         const products = orderDetails.orderedItem
-//         res.render('users/singleOrder', { orderDetails: orderDetails, user: userId,       finalAmount: orderDetails.finalAmount,
-//             discount: orderDetails.discountAmount,
-//             couponCode: orderDetails.coupons ? orderDetails.coupons.code : null,
-//             shippingCharge:shippingCharge
-//           })
-//     } catch (error) {
-//         console.log(error.message);
-//     }
-// }
 
 const viewOrder = async (req, res) => {
     try {
@@ -73,7 +47,6 @@ const viewOrder = async (req, res) => {
             .populate('deliveryAddress')
             .populate('coupons');
 
-        console.log('OrderDetails:::::::::', orderDetails);
 
         const shippingCharge = 100;
         const products = orderDetails.orderedItem;
@@ -92,125 +65,28 @@ const viewOrder = async (req, res) => {
 };
 
 
-// const cancelOrder = async (req, res) => {
-
-//     const orderId = req.params.orderId;
-//     // console.log('orderId',orderId);
-//     const newStatus = req.body.status;
-//     // console.log('newStatus',newStatus);
-//     try {
-
-//         const updatedOrder = await Order.findByIdAndUpdate(orderId, { orderStatus: newStatus }, { new: true });
-//         if (!updatedOrder) {
-//             return res.status(404).json({ error: 'Order not found' });
-//         }
-
-//         res.status(200).json(updatedOrder);
-//     } catch (error) {
-//         console.error('Error updating order status:', error);
-//         res.status(500).json({ error: 'Failed to update order status' });
-//     }
-// };
 
 
-// const returnOrder = async (req, res) => {
-//     console.log('inside returnOrder');
-    
-//     const { orderId, returnReason, otherReason } = req.body;
-//     console.log('Request body:', req.body);
 
-//     if (!orderId) {
-//         console.log('Order ID is required');
-//         return res.status(400).json({ error: 'Order ID is required' });
-//     }
 
-//     try {
-//         console.log('Fetching order from database');
-//         const order = await Order.findById(orderId);
-//         console.log('Order:', order);
-
-//         if (!order) {
-//             console.log('Order not found');
-//             return res.status(404).json({ error: 'Order not found' });
-//         }
-
-//         console.log('Payment Method:', order.paymentMethod);
-//         console.log('Order Status:', order.orderStatus);
-
-//         if (order.paymentMethod.toLowerCase() !== 'razorpay') {
-//             console.log('Order was not paid via Razorpay');
-//             return res.status(400).json({ message: 'Order was not paid via Razorpay.' });
-//         }
-
-//         if (order.orderStatus === 'returned') {
-//             console.log('Order is already returned');
-//             return res.status(400).json({ message: 'Order is already returned.' });
-//         }
-
-//         if (order.orderStatus !== 'delivered') {
-//             console.log('Only delivered orders can be returned');
-//             return res.status(400).json({ message: 'Only delivered orders can be returned.' });
-//         }
-
-//         const refundAmount = order.finalAmount;
-//         console.log('Refund Amount:', refundAmount);
-
-       
-
-//         console.log('Fetching wallet for user:', order.userId);
-//         let wallet = await Wallet.findOne({ userId: order.userId });
-//         console.log('Wallet:', wallet);
-
-//         if (!wallet) {
-//             console.log('Wallet not found');
-//             wallet = new Wallet({ userId: order.userId, balance: 0, transaction: [] });
-//         }
-
-//         order.orderStatus = 'returned';
-//         order.returnReason = returnReason || otherReason;
-//         await order.save();
-
-//         wallet.balance += refundAmount;
-//         console.log('Updated Wallet Balance:', wallet.balance);
-
-//         wallet.transaction.push({
-//             amount: refundAmount,
-//             transactionsMethod: 'Remarks',
-//             date: new Date(),
-//             remarks: 'Order return refund'
-//         });
-
-//         await wallet.save();
-//         console.log('Updated Wallet:', wallet);
-
-//         res.status(200).json({ message: 'Order returned successfully and amount refunded to wallet.' });
-//     } catch (error) {
-//         console.error('Error in returnOrder:', error);
-//         res.status(500).json({ message: 'Failed to return order', error: error.message });
-//     }
-// };
 const cancelOrder = async (req, res) => {
     const orderId = req.params.orderId;
 
     try {
-        // Fetch the order to update its status
         const order = await Order.findById(orderId).populate('orderedItem.productId');
         if (!order) {
             return res.status(404).json({ error: 'Order not found' });
         }
 
-        // Update product quantities and prepare refund details
         const productsToRefund = [];
         let totalRefundAmount = 0;
 
         for (const item of order.orderedItem) {
             const product = await Product.findById(item.productId);
             if (product) {
-                // Increase stock by the ordered quantity
                 product.quantity += item.quantity; 
                 await product.save();
 
-                // Check payment status for refund
                 if (order.paymentStatus === 'paid') {
                     productsToRefund.push(item);
                     totalRefundAmount += item.price * item.quantity; // Calculate refund amount
@@ -218,14 +94,11 @@ const cancelOrder = async (req, res) => {
             }
         }
 
-        // Refund logic if payment status is paid
         if (order.paymentStatus === 'paid' && totalRefundAmount > 0) {
             let wallet = await Wallet.findOne({ userId: order.userId });
             if (!wallet) {
-                // If the wallet doesn't exist, create a new one
                 wallet = new Wallet({ userId: order.userId, balance: 0, transaction: [] });
             }
-            // Update the wallet balance
             wallet.balance += totalRefundAmount;
             wallet.transaction.push({
                 amount: totalRefundAmount,
@@ -236,7 +109,6 @@ const cancelOrder = async (req, res) => {
             await wallet.save();
         }
 
-        // Update the order status to cancelled
         order.orderStatus = 'cancelled';
         await order.save();
 
@@ -249,51 +121,38 @@ const cancelOrder = async (req, res) => {
 
 
 const returnOrder = async (req, res) => {
-    console.log('inside returnOrder');
 
     const { orderId, returnReason, otherReason } = req.body;
-    console.log('Request body:', req.body);
 
     if (!orderId) {
-        console.log('Order ID is required');
         return res.status(400).json({ error: 'Order ID is required' });
     }
 
     try {
-        console.log('Fetching order from database');
         const order = await Order.findById(orderId);
-        console.log('Order:', order);
 
         if (!order) {
-            console.log('Order not found');
             return res.status(404).json({ error: 'Order not found' });
         }
 
-        console.log('Order Status:', order.orderStatus);
 
         // Check if the order is already returned
         if (order.orderStatus === 'returned') {
-            console.log('Order is already returned');
             return res.status(400).json({ message: 'Order is already returned.' });
         }
 
         // Check if the order is not delivered
         if (order.orderStatus !== 'delivered') {
-            console.log('Only delivered orders can be returned');
             return res.status(400).json({ message: 'Only delivered orders can be returned.' });
         }
 
         // Calculate the refund amount
         const refundAmount = order.finalAmount;
-        console.log('Refund Amount:', refundAmount);
 
         // Fetch the user's wallet
-        console.log('Fetching wallet for user:', order.userId);
         let wallet = await Wallet.findOne({ userId: order.userId });
-        console.log('Wallet:', wallet);
 
         if (!wallet) {
-            console.log('Wallet not found');
             wallet = new Wallet({ userId: order.userId, balance: 0, transaction: [] });
         }
 
@@ -302,7 +161,6 @@ const returnOrder = async (req, res) => {
             if (product) {
                 product.quantity += item.quantity; // Increase stock by the returned quantity
                 await product.save();
-                console.log(`Updated stock for product ${product.name}:`, product.quantity);
             }
         }
         // Update order status and reason
@@ -312,7 +170,6 @@ const returnOrder = async (req, res) => {
 
         // Add refund to wallet
         wallet.balance += refundAmount;
-        console.log('Updated Wallet Balance:', wallet.balance);
 
         // Add the transaction to wallet history
         wallet.transaction.push({
@@ -323,7 +180,6 @@ const returnOrder = async (req, res) => {
         });
 
         await wallet.save();
-        console.log('Updated Wallet:', wallet);
 
         res.status(200).json({ message: 'Order returned successfully and amount refunded to wallet.' });
     } catch (error) {
@@ -376,7 +232,9 @@ const downloadInvoice = async (req, res) => {
         if (orderDetails.orderStatus === 'cancelled') {
             return res.status(400).send('Cannot download invoice for a canceled order.');
         }
-
+        if (orderDetails.orderStatus !== 'delivered' && orderDetails.orderStatus !== 'returned') {
+            return res.status(400).send('Invoice download is only available for delivered or returned orders.');
+        }
         const doc = new PDFDocument();
         
         res.setHeader('Content-disposition', `attachment; filename=invoice_${orderDetails.orderUniqueId}.pdf`);

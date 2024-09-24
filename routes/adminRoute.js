@@ -47,8 +47,6 @@ const upload=multer({storage:storage})
 const auth=require('../middleware/adminAuth')
 const product =require ('../routes/productRoute')
 
-
-
 admin_route.get('/',auth.isLogout,adminController.loadLogin)
 admin_route.post('/',adminController.adminVerify)
 admin_route.get('/dashboard',adminController.loadDashboard)
@@ -76,28 +74,11 @@ admin_route.get('/editOffer',offerController.editOffersLoad)
 admin_route.post('/editOffer/:id',offerController.editOffers)
 admin_route.delete('/offers/:id', offerController.deleteOffer)
 
-
-// admin_route.get('/salesReport',salesController.salesReports)
-// admin_route.get('/salesDaily', salesController.dailyReport)
-// admin_route.get('/salesWeekly',salesController.weeklyReport)
-// admin_route.get('/salesMonthly',salesController.monthlyReport)
-// admin_route.get('/salesYearly',salesController.yearlyReport)
-// admin_route.get('/customDateReport',salesController.customSalesReport)
-
 admin_route.get('/salesReport', salesController.generateSalesReport)
 admin_route.get('/customDateReport', salesController.generateSalesReport);
 admin_route.get('/downloadPDF', salesController.downloadPDF)
 admin_route.get('/downloadExcel', salesController.downloadExcel)
 
-
-// admin_route.get('/downloadPDF',salesController.generatePDFReport)
-
-
-
-
-// admin_route.post('/custommer/:id/block',auth.isLogin, adminController.blockUser)
-// admin_route.post('/custommer/:id/unblock', auth.isLogin , adminController.unblockUser)
-// admin_route.get('/products',adminController.productDetails)
 
 
 

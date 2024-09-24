@@ -78,22 +78,22 @@
     }
     .sidebar {
       background-color: #343a40;
-    position: fixed; /* Keeps the sidebar in a fixed position */
-    top: 30px; /* Aligns it to the top */
-    left: 0; /* Aligns it to the left */
-    width: 250px; /* Adjust as needed */
-    height: 100%; /* Full height */
-    overflow-y: auto; /* Allows scrolling if the sidebar content overflows */
-    z-index: 1000; /* Ensures it stays above other elements */
+    position: fixed;
+    top: 30px; 
+    left: 0; 
+    width: 250px; 
+    height: 100%; 
+    overflow-y: auto;
+    z-index: 1000; 
 }
 .brand-logo {
-    display: flex; /* Flexbox can help with alignment */
-    align-items: center; /* Center vertically */
+    display: flex; 
+    align-items: center; 
 }
 
 .logo-img {
-    width: 215px !important; /* Desired width */
-    height: auto !important; /* Maintain aspect ratio */
+    width: 215px !important; 
+    height: auto !important; 
 }
 
   </style>
@@ -109,7 +109,6 @@
     </div>
     <div class="navbar-menu-wrapper d-flex align-items-center justify-content-between" style="background-color: rgb(237, 231, 231); border-bottom: 1px solid #e0e0e0;">
       <ul class="navbar-nav navbar-nav-right">
-          <!-- Your nav items here -->
       </ul>
   </div>
   </nav>
@@ -208,7 +207,6 @@
         <input type="number" id="productPrice" name="productPrice" oninput="hello(this)" required>
         <div class="image-row">
           <div class="image-upload-container">
-            <label for="productImage">Image 1:</label>
             <input type="file" id="productImage" onchange="hello(this)" name="image" accept="image/*" multiple required>
           </div>
         </div>

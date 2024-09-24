@@ -8,7 +8,6 @@ const productsLoad = async (req, res) => {
         const categories = await Category.find({ status: true });
         res.render('addProduct', { Data: categories });
     } catch (error) {
-        console.log(error.message);
         res.status(500).send("Internal Server Error");
     }
 }
@@ -17,8 +16,6 @@ const productsLoad = async (req, res) => {
 const addProducts = async (req, res) => {
 
     try {
-        console.log('Request files:', req.files);
-        console.log('Request body:', req.body);
 
         if (!req.files || req.files.length === 0) {
             throw new Error('No files uploaded.');
@@ -37,7 +34,6 @@ const addProducts = async (req, res) => {
             size: productSize,
             description: productDescription
         });
-        console.log('new product:', newProduct);
 
         await newProduct.save();
         res.redirect('/admin/products');
@@ -66,7 +62,6 @@ const productLists = async (req, res) => {
 
 
 const editLoad = async (req, res) => {
-    console.log("editLoad route accessed");
     try {
         const productId = req.query.productId;
         const product = await Product.findById(productId)
@@ -89,7 +84,6 @@ const editProduct = async (req, res) => {
 
     const images = req.files.map(file => file.filename)
     let old = await Product.findOne({ _id: productId });
-    console.log(old + 'kkk');
     let image = []
     for (let i = 0; i < old.image.length; i++) {
         if (old.image[i] !== req.body.kk[i]) {
@@ -99,7 +93,6 @@ const editProduct = async (req, res) => {
                 }
             })
         } else {
-            console.log(req.body.kk[i], old.image[i]);
             image[i] = old.image[i]
         }
     }
@@ -146,7 +139,6 @@ const deleteEditProduct = async (req, res) => {
                     console.error('Error deleting image:', err);
                     return res.status(500).json({ error: 'Internal server error' });
                 }
-                console.log('Image deleted:', imageName);
                 try {
                     const productId = req.params.productId;
                     const product = await Product.findById(productId);
@@ -176,13 +168,10 @@ const deleteEditProduct = async (req, res) => {
 
 
 const updateProductStatus = async (req, res) => {
-    console.log('updateProductStatus');
 
     try {
         const productId = req.params.id;
-        console.log('productId', productId);
         const product = await Product.findById(productId);
-        console.log('product', product);
 
         const isConfirmed = req.query.confirm === 'true';
 
@@ -205,8 +194,6 @@ const deleteProduct = async (req, res) => {
     try {
 
         const productId = req.params.id;
-        console.log("deleteion");
-        console.log("parmas : ", req.params);
         const deleted = await Product.findOneAndDelete({ _id: productId });
         res.status(200).json({ message: "deleted successfully" });
 

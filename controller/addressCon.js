@@ -1,25 +1,26 @@
-const User =require ('../model/userModel')
-const Address = require ('../model/addressModel')
+const User = require('../model/userModel')
+const Address = require('../model/addressModel')
 const Cart = require('../model/cartModel')
 const Product = require('../model/productModel')
 const Order = require('../model/orderModel')
 const Coupon = require('../model/couponModel')
-const Wallet = require ('../model/walletModel')
+const Wallet = require('../model/walletModel')
+const validate = require('../middleware/validate')
+
 
 
 
 
 //  Address load
 
-const addressLoad = async (req,res) => {
+const addressLoad = async (req, res) => {
     const id = req.session.user_id
-    const user = await User.findById({_id:id})
-    console.log('user',user);
-    const address = await Address.find({user:id})
-    console.log('address',address); 
+    const user = await User.findById({ _id: id })
+
+    const address = await Address.find({ user: id })
     try {
-        res.render('users/address',{user:user,address:address})
-        
+        res.render('users/address', { user: user, address: address })
+
     } catch (error) {
         console.log(error.message);
     }
@@ -28,41 +29,41 @@ const addressLoad = async (req,res) => {
 
 // addAddress Load
 
-const addAddressLoad = async (req,res) => {
+const addAddressLoad = async (req, res) => {
 
     try {
         const id = req.session.user_id
-        const user = await User.findById({_id:id})
-        return res.render('users/addAddress',{user:user})
+        const user = await User.findById({ _id: id })
+        return res.render('users/addAddress', { user: user })
     } catch (error) {
-        console.log(error.message); 
+        console.log(error.message);
     }
 }
 
 
 // Add Address in address page
 
-const addAddress = async (req,res) => {
+const addAddress = async (req, res) => {
     try {
-        
 
-        const newAddress = new Address ({
-            user : req.session.user_id,
-            name : req.body.name,
-            mobile : req.body.mobile,
-            streetAddress : req.body.streetAddress,
-            city : req.body.city,
-            state : req.body.state,
-            postalCode : req.body.postalCode,
-            locality:req.body.locality,
-            landmark:req.body.landmark,
-            alterPhone:req.body.alterPhone,
-            addressType:req.body.addressType
+
+        const newAddress = new Address({
+            user: req.session.user_id,
+            name: req.body.name,
+            mobile: req.body.mobile,
+            streetAddress: req.body.streetAddress,
+            city: req.body.city,
+            state: req.body.state,
+            postalCode: req.body.postalCode,
+            locality: req.body.locality,
+            landmark: req.body.landmark,
+            alterPhone: req.body.alterPhone,
+            addressType: req.body.addressType
         })
 
         await newAddress.save()
 
-        res.redirect ('/address')
+        res.redirect('/address')
 
     } catch (error) {
         console.error('Error saving address:', error);
@@ -74,17 +75,17 @@ const addAddress = async (req,res) => {
 
 // Edit Address pageLoad
 
-const editAddressLoad = async (req,res) => {
+const editAddressLoad = async (req, res) => {
     try {
 
         const id = req.query.id
         const user_id = req.session.user_id
-        const user = await User.findOne({_id:user_id});
-        const address = await Address.findById({_id:id});
-        if(!address){
+        const user = await User.findOne({ _id: user_id });
+        const address = await Address.findById({ _id: id });
+        if (!address) {
             return res.status(404).send('Address not found');
         }
-        res.render('users/editAddress',{user:user,address:address})
+        res.render('users/editAddress', { user: user, address: address })
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');
@@ -94,29 +95,29 @@ const editAddressLoad = async (req,res) => {
 
 // Edit Address in address page
 
-const editAddress = async (req,res) => {
+const editAddress = async (req, res) => {
     try {
         const userid = req.session.user_id
-        
+
         const user = await User.findById(userid)
         const id = req.body.id
-        const address = await Address.findOne({_id:id})
+        const address = await Address.findOne({ _id: id })
 
 
         const updateFields = {
-           name : req.body.name,
-           mobile : req.body.mobile,
-           streetAddress : req.body.streetAddress,
-           city : req.body.city,
-           state : req.body.state,
-           postalCode : req.body.postalCode,
-           locality : req.body.locality,
-           landmark : req.body.landmark,
-           alterPhone : req.body.alterPhone,
-           addressType : req.body.addressType
+            name: req.body.name,
+            mobile: req.body.mobile,
+            streetAddress: req.body.streetAddress,
+            city: req.body.city,
+            state: req.body.state,
+            postalCode: req.body.postalCode,
+            locality: req.body.locality,
+            landmark: req.body.landmark,
+            alterPhone: req.body.alterPhone,
+            addressType: req.body.addressType
         }
 
-        const updateAddress = await Address.findByIdAndUpdate(id,{$set: updateFields},{new:true})
+        const updateAddress = await Address.findByIdAndUpdate(id, { $set: updateFields }, { new: true })
         res.redirect('/address')
     } catch (error) {
         console.error('Error updating address:', error);
@@ -145,36 +146,30 @@ const deleteAddress = async (req, res) => {
 
 const loadCheckout = async (req, res) => {
     try {
+        await validate(req.session.user_id)
+
         const userId = req.session.user_id;
-        console.log('userId in loadCheckout',userId);
-        
+
+
         const user = await User.findById(userId);
-        console.log('user in loadCheckout',user);
 
         const carts = await Cart.find({ userId }).populate('productId');
-        console.log('carts in loadCheckout',carts);
 
         const address = await Address.find({ user: userId });
-        console.log('address in loadCheckout',address);
 
 
-        const wallet = await Wallet.findOne({ userId }); 
-        console.log('wallet in loadCheckout',wallet);
+        const wallet = await Wallet.findOne({ userId });
 
         const walletBalance = wallet ? wallet.balance : 0;
-        console.log('walletBalance in loadCheckout',walletBalance);
-        
+
         const totalPrice = carts.reduce((acc, cartItem) => {
             const price = cartItem.productId.offerPrice || cartItem.productId.price;
             return acc + (price * cartItem.quantity);
         }, 0);
 
-        console.log('totalPrice in loadCheckout',totalPrice);
 
-        const discount = req.session.discount || 0; 
+        const discount = req.session.discount || 0;
         const finalAmount = totalPrice - discount;
-        console.log('discount in loadCheckout',discount);
-        console.log('finalAmount in loadCheckout',finalAmount);
 
         res.render('users/checkout', {
             userId, address, user, cart: carts,
@@ -190,25 +185,25 @@ const loadCheckout = async (req, res) => {
 
 //  Add Address in Checkout page
 
-const checkoutAddress = async (req,res) => {
+const checkoutAddress = async (req, res) => {
     try {
-        const newAddress = new Address ({
-            user : req.session.user_id,
-            name : req.body.name,
-            mobile : req.body.mobile,
-            streetAddress : req.body.streetAddress,
-            city : req.body.city,
-            state : req.body.state,
-            postalCode : req.body.postalCode,
-            locality:req.body.locality,
-            landmark:req.body.landmark,
-            alterPhone:req.body.alterPhone,
-            addressType:req.body.addressType
+        const newAddress = new Address({
+            user: req.session.user_id,
+            name: req.body.name,
+            mobile: req.body.mobile,
+            streetAddress: req.body.streetAddress,
+            city: req.body.city,
+            state: req.body.state,
+            postalCode: req.body.postalCode,
+            locality: req.body.locality,
+            landmark: req.body.landmark,
+            alterPhone: req.body.alterPhone,
+            addressType: req.body.addressType
         })
 
         await newAddress.save()
 
-        res.redirect ('/checkout')
+        res.redirect('/checkout')
 
     } catch (error) {
         console.error('Error saving address:', error);
@@ -253,9 +248,7 @@ const editCheckout = async (req, res) => {
             alterPhone: req.body.alterPhone,
             addressType: req.body.addressType
         };
-        console.log('updateFields',updateFields);
         const updatedAddress = await Address.findByIdAndUpdate(addressId, updateFields, { new: true });
-        console.log('updatedAddress',updatedAddress);
         res.status(201).json(updatedAddress);
     } catch (error) {
         console.error('Error updating address:', error);
@@ -268,18 +261,16 @@ const editCheckout = async (req, res) => {
 
 // load Thankyou page
 
-const loadThenkyou= async (req, res) => {
-    console.log('inside the load Thankyou');
-    
+const loadThenkyou = async (req, res) => {
+
     const orderId = req.query.orderId;
     try {
         const order = await Order.findOne({ _id: orderId })
             .populate({
                 path: 'orderedItem.productId',
-                select: 'name image'  
+                select: 'name image'
             });
 
-        console.log('Order in load Thankyou:', order);
         if (!order) {
             return res.status(404).send('Order not found');
         }
@@ -296,21 +287,17 @@ const loadThenkyou= async (req, res) => {
 // for create unique id
 
 const generateUniqueOrderId = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString(); 
+    return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
 
 const placeOrder = async (req, res) => {
     try {
-        console.log('req.body from placeOrder', req.body);
-        
-        const { deliveryAddress, paymentMethod, couponCode,paymentStatus } = req.body;
-        console.log('Delivery Address from placeOrder:', deliveryAddress);
-        console.log('Payment Method from placeOrder:', paymentMethod);
-        console.log('Coupon Code from placeOrder:', couponCode);
+
+        const { deliveryAddress, paymentMethod, couponCode, paymentStatus } = req.body;
 
         const userId = req.session.user_id;
-        const cart = await Cart.find({ userId }).lean(); 
+        const cart = await Cart.find({ userId }).lean();
 
         if (!cart || cart.length === 0) {
             return res.redirect('/cart?message=Your cart is empty');
@@ -322,7 +309,6 @@ const placeOrder = async (req, res) => {
             price: item.offerPrice ? item.offerPrice : item.price,
         }));
 
-        console.log('orderedItems from placeOrder', orderedItems);
 
         for (let item of orderedItems) {
             const { productId, quantity } = item;
@@ -330,12 +316,11 @@ const placeOrder = async (req, res) => {
         }
 
         const orderAmount = cart.reduce((acc, item) => {
-            return acc + (item.price *item.quantity );
+            return acc + (item.price * item.quantity);
         }, 0);
-        console.log('Order Amount from placeOrder:', orderAmount);
 
 
-        let subtotal=0
+        let subtotal = 0
         let discount = 0;
         let finalAmount = 0;
         let coupon = null;
@@ -344,10 +329,10 @@ const placeOrder = async (req, res) => {
         orderedItems.forEach(item => {
             subtotal += item.price * item.quantity;
         });
-        
+
 
         if (couponCode) {
-             coupon = await Coupon.findOne({ code: couponCode });
+            coupon = await Coupon.findOne({ code: couponCode });
             if (coupon) {
                 const currentDate = new Date();
                 if (coupon.expirationDate < currentDate || !coupon.status) {
@@ -360,10 +345,8 @@ const placeOrder = async (req, res) => {
                 if (coupon.discountType === 'percentage') {
                     discount = (subtotal * coupon.discountValue) / 100;
 
-                    console.log(`Percentage discount: ${discount}`);
                 } else if (coupon.discountType === 'fixed') {
                     discount = coupon.discountValue;
-                    console.log(`Fixed discount: ${discount}`);
                 }
 
                 finalAmount = Math.max(subtotal - discount, 0);
@@ -377,15 +360,9 @@ const placeOrder = async (req, res) => {
 
         finalAmount += shippingCharge;
 
-        
-        console.log('Subtotal:', subtotal);
-        console.log('Discount:', discount);
-        console.log('Final Amount:', finalAmount);
-        console.log('Final Amount (with shipping):', finalAmount);
-        console.log('Payment status:', paymentStatus);
 
         let finalPaymentStatus = paymentStatus;
-       
+
         if (!paymentStatus) {
             // Set payment status to 'pending' for 'Cash on Delivery' and 'razorpay'
             if (paymentMethod === 'cash_on_delivery') {
@@ -398,7 +375,7 @@ const placeOrder = async (req, res) => {
         }
 
         const order = new Order({
-            orderUniqueId:generateUniqueOrderId(),
+            orderUniqueId: generateUniqueOrderId(),
             userId: userId,
             orderedItem: orderedItems,
             orderAmount: subtotal,
@@ -409,16 +386,15 @@ const placeOrder = async (req, res) => {
             paymentMethod: paymentMethod,
             orderStatus: 'processing',
             deliveryDate: null,
-            shippingDate:new Date(),
+            shippingDate: new Date(),
             coupons: coupon ? coupon._id : null,
             paymentStatus: finalPaymentStatus,
-            shippingCharge: shippingCharge 
+            shippingCharge: shippingCharge
         });
 
-        console.log('Order to be saved from placeOrder:', order);
-        
+
         await order.save();
-        
+
         if (coupon) {
             coupon.usedBy.push(userId);
             await coupon.save();
@@ -432,7 +408,7 @@ const placeOrder = async (req, res) => {
     }
 };
 
-       
+
 
 
 
@@ -450,9 +426,9 @@ module.exports = {
     checkoutAddress,
     getAddressDetails,
     editCheckout,
-    
-   
-    
+
+
+
     placeOrder,
     loadThenkyou
 }

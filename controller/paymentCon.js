@@ -164,7 +164,7 @@ const rezorpayRetry = async (req, res) => {
         const Order = await orderModel.findOne({ _id: id }).populate("userId");
 
         const shippingCharge = 100;
-        const totalAmount = Order.totalAmount + shippingCharge;
+        const totalAmount = Order.finalAmount 
 
         const options = {
             amount: totalAmount*100,
@@ -357,8 +357,11 @@ const walletView = async (req, res) => {
 
 
 const placeOrderWallet = async (req, res) => {
+    console.log('inside the placeOrder wallet');
     try {
+        console.log('inside thetry case of  placeOrder wallet');
         const { deliveryAddress, couponCode } = req.body;
+        console.log('req.body in walletPlaceOrder>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', req.body);
         const userId = req.session.user_id;
 
         if (!userId) {
@@ -371,11 +374,13 @@ const placeOrderWallet = async (req, res) => {
         }
 
         const wallet = await Wallet.findOne({ userId: userId });
+        console.log('wallet in walletPlaceOrder>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', wallet);
         if (!wallet) {
             return res.status(404).json({ message: 'Wallet not found' });
         }
 
         const cartItems = await Cart.find({ userId: userId }).populate('productId');
+        console.log('cartItems in walletPlaceOrder>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', cartItems);
         if (!cartItems || cartItems.length === 0) {
             return res.status(400).json({ message: 'Your cart is empty' });
         }
@@ -401,28 +406,45 @@ const placeOrderWallet = async (req, res) => {
         console.log('Subtotal:', subtotal);
 
         if (couponCode) {
+            console.log('inside the if (couponCode) case of placeOrder wallet');
+        
             coupon = await Coupon.findOne({ code: couponCode });
             if (coupon) {
                 const currentDate = new Date();
+                
+                // Check if coupon is valid
                 if (coupon.expirationDate < currentDate || !coupon.status) {
                     return res.status(400).json({ message: 'Coupon expired or inactive' });
                 }
+        
+                // Check if the order meets the minimum order value requirement
                 if (subtotal < coupon.minOrderValue) {
                     return res.status(400).json({ message: `Minimum order value for this coupon is ${coupon.minOrderValue}` });
                 }
-
+        
+                // Calculate discount based on the coupon type
                 if (coupon.discountType === 'percentage') {
-                    discount = (subtotal * coupon.discountValue) / 100;
+                    if (!isNaN(coupon.discountValue) && coupon.discountValue > 0) {
+                        discount = (subtotal * coupon.discountValue) / 100;
+                    } else {
+                        return res.status(400).json({ message: 'Invalid discount value for percentage coupon' });
+                    }
                 } else if (coupon.discountType === 'fixed') {
-                    discount = coupon.discountValue;
+                    if (!isNaN(coupon.discountValue) && coupon.discountValue > 0) {
+                        discount = coupon.discountValue;
+                    } else {
+                        return res.status(400).json({ message: 'Invalid discount value for fixed coupon' });
+                    }
+                } else {
+                    return res.status(400).json({ message: 'Invalid coupon type' });
                 }
-
-                discount = Math.min(discount, coupon.maxDiscount);
+        
+                // Ensure discount does not exceed the maximum allowed by the coupon
+                discount = Math.min(discount, coupon.maxDiscount || discount);
             } else {
                 return res.status(400).json({ message: 'Invalid coupon code' });
             }
         }
-
         // Apply discount and add shipping charge
         finalOrderAmount = subtotal - discount + shippingCharge;
 
@@ -482,6 +504,8 @@ const placeOrderWallet = async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
+
 
 
 module.exports = {

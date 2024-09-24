@@ -1,7 +1,7 @@
 const Order = require('../model/orderModel')
 const Product = require('../model/productModel')
 const moment = require('moment')
-const PDFDocument  = require('pdfkit')
+const PDFDocument = require('pdfkit')
 const excelJS = require('exceljs')
 const fs = require('fs')
 
@@ -47,25 +47,18 @@ const generateSalesReport = async (req, res) => {
     const reportType = req.query.reportType || 'daily';
     const { startDate, endDate, title } = getDateRange(reportType);
     const currentPage = parseInt(req.query.page, 10) || 1;
-    const itemsPerPage = 10; 
+    const itemsPerPage = 10;
 
     try {
         let filter = {};
 
-        console.log('Received query parameters:', {
-            reportType,
-            startDate: req.query.startDate,
-            endDate: req.query.endDate
-        });
 
-         if (reportType === 'custom') {
+
+        if (reportType === 'custom') {
             const customStartDate = moment(req.query.startDate);
             const customEndDate = moment(req.query.endDate);
 
-            console.log('Parsed custom dates:', {
-                customStartDate: customStartDate.toDate(),
-                customEndDate: customEndDate.toDate()
-            });
+
 
             filter = {
                 createdAt: {
@@ -87,7 +80,6 @@ const generateSalesReport = async (req, res) => {
         const totalCount = await Order.countDocuments(filter);
         const totalPages = Math.ceil(totalCount / itemsPerPage);
 
-        console.log('Filter object:', filter);
 
         const orders = await Order.aggregate([
             { $match: filter },
@@ -96,21 +88,21 @@ const generateSalesReport = async (req, res) => {
                     _id: null,
                     totalOrders: { $sum: 1 },
                     totalAmount: { $sum: '$orderAmount' },
-                    totalDiscount: { $sum: '$discountAmount' }, 
+                    totalDiscount: { $sum: '$discountAmount' },
                     totalCouponAmount: { $sum: '$discountAmount' }// Assuming 'discount' field
                 },
             },
         ]);
 
-        const detailedOrders =  await Order.find(filter)
-        .skip((currentPage - 1) * itemsPerPage)
-        .limit(itemsPerPage)
-        .sort({ createdAt: -1 }) 
-        .populate('userId')
-        .populate('coupons');
+        const detailedOrders = await Order.find(filter)
+            .skip((currentPage - 1) * itemsPerPage)
+            .limit(itemsPerPage)
+            .sort({ createdAt: -1 })
+            .populate('userId')
+            .populate('coupons');
 
         const formattedOrders = detailedOrders.map(order => ({
-            ...order._doc, 
+            ...order._doc,
             shippingDate: moment(order.shippingDate).format('YYYY-MM-DD'),
             couponCode: order.coupons ? order.coupons.code : 'N/A',
             discountAmount: order.discountAmount,
@@ -140,7 +132,7 @@ function addSummary(doc, reportType, totalOrders, totalAmount) {
     doc.moveDown();
     doc.fontSize(12).text(`Total Orders: ${totalOrders}`);
     doc.text(`Total Amount: ${totalAmount.toFixed(2)}`);
-    doc.moveDown(2); 
+    doc.moveDown(2);
 }
 
 
@@ -162,7 +154,7 @@ function addOrderDetails(doc, detailedOrders) {
 
         if (order.coupons) {
             const discountValue = order.coupons.discountValue;
-            const isPercentage = order.coupons.discountType === 'percentage'; 
+            const isPercentage = order.coupons.discountType === 'percentage';
 
             const discountText = isPercentage ? `${Math.round(discountValue)}%` : ` ₹${discountValue.toFixed(2)}`;
             doc.text(`Discount: ${discountText}`);
@@ -172,7 +164,7 @@ function addOrderDetails(doc, detailedOrders) {
 
         doc.text(`Final Amount: ${order.finalAmount.toFixed(2)}`);
 
-        doc.moveDown(); 
+        doc.moveDown();
     });
 }
 
@@ -181,7 +173,7 @@ const downloadPDF = async (req, res) => {
     const { startDate, endDate } = getDateRange(reportType);
 
     try {
-        let filter = { paymentStatus: { $ne: 'failed' } };
+        let filter = { paymentStatus: 'paid'};
 
         if (reportType === 'custom') {
             filter.createdAt = {
@@ -199,7 +191,7 @@ const downloadPDF = async (req, res) => {
             .populate('userId')
             .populate({
                 path: 'coupons',
-                select: 'discountValue code discountType', 
+                select: 'discountValue code discountType',
             })
             .sort({ createdAt: -1 });
 
@@ -209,9 +201,8 @@ const downloadPDF = async (req, res) => {
         const doc = new PDFDocument();
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=salesReport.pdf');
-        
+
         res.on('finish', () => {
-            console.log('PDF generated and sent successfully');
         });
 
         doc.pipe(res);
@@ -227,12 +218,13 @@ const downloadPDF = async (req, res) => {
     }
 };
 
+
 const downloadExcel = async (req, res) => {
     const reportType = req.query.reportType || 'daily';
     const { startDate, endDate } = getDateRange(reportType);
 
     try {
-        let filter = { paymentStatus: { $ne: 'failed' } }; 
+        let filter = { paymentStatus: 'paid', };
 
         if (reportType === 'custom') {
             filter.createdAt = {
@@ -250,7 +242,7 @@ const downloadExcel = async (req, res) => {
             .populate('userId')
             .populate({
                 path: 'coupons',
-                select: 'discountValue code discountType', 
+                select: 'discountValue code discountType',
             })
             .sort({ createdAt: -1 });
 

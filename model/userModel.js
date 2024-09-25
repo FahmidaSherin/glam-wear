@@ -29,9 +29,9 @@ const mongoose=require("mongoose")
         default:0
 
     },
-    is_varified:{
-        type:Number,
-        default:0
+    is_verified: { // Changed from is_varified to is_verified
+        type: Number,
+        default: 0
     },
     is_blocked:{
         type:Number,

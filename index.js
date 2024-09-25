@@ -10,7 +10,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 require('dotenv').config();
 
-mongoose.connect('mongodb://localhost:27017/MyProject')
+mongoose.connect('mongodb+srv://shirinmunzz:123@cluster0.xmt8s.mongodb.net/glamWear')
 
 const express=require('express')
  const session = require('express-session');

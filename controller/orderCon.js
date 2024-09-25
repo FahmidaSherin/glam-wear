@@ -23,6 +23,13 @@ const orderList = async (req, res) => {
 
         const order = await Order.find({ userId: userId }).populate('orderedItem.productId').sort({ createdAt: -1 }).skip(skip)
         .limit(limit);
+
+        order.forEach(order => {
+            if (order.paymentStatus === 'failed') {
+                order.orderStatus = 'pending'; // Change status to pending
+            }
+        });
+
         const users = await User.findOne({ _id: userId });
         res.render('users/orders', { order: order, users: users, currentPage: page,
             totalPages: totalPages,limit: limit });
@@ -48,6 +55,10 @@ const viewOrder = async (req, res) => {
             .populate('coupons');
 
 
+            if (orderDetails.paymentStatus === 'failed') {
+                orderDetails.orderStatus = 'pending'; 
+            }
+               
         const shippingCharge = 100;
         const products = orderDetails.orderedItem;
         

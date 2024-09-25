@@ -300,7 +300,7 @@ const verifyOTP = async (req, res) => {
         if (otp === user.otp) {
             console.log(otp,'otp');
             console.log(user.otp, 'user.otp');
-            user.is_varified = true;
+            user.isVerified = true;
             await user.save();
             req.session.user_id = null
             const refUser = req.session.ref;

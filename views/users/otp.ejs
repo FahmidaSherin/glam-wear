@@ -74,7 +74,7 @@
             <% } %>
                 <form id="otpForm" action="/verify-otp" method="post">
                     <div class="otp-inputs">
-                        <input name="otp" type="text" id="otp1" maxlength="6" class="otp-box" />
+                        <input name="otp" type="text" id="otp1" maxlength="6" class="otp-box" required/>
                     </div>
 
                     <button type="submit">Verify OTP</button>
@@ -111,9 +111,31 @@
             }, 1000);
         }
         function resendOTP() {
+    alert("Resending OTP...");
 
-            alert("Resending OTP...");
+    fetch('/resend-otp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId:user._id })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('OTP has been resent!');
+            // Restart the timer if needed
+            startTimer();
+        } else {
+            alert('Failed to resend OTP. Please try again.');
         }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again later.');
+    });
+}
+
 
         window.onload = startTimer;
     </script>

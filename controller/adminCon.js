@@ -405,6 +405,10 @@ const singleView = async (req, res) => {
             .populate({ path: 'orderedItem.productId', model: 'Product' })
             .populate('deliveryAddress');
 
+            if (orderDetails.paymentStatus === 'failed') {
+                orderDetails.orderStatus = 'pending';
+            }
+            
         orderDetails.orderedItem = orderDetails.orderedItem.map(item => {
             let price = parseFloat(item.productId.price) || 0;
             const quantity = parseInt(item.quantity) || 0;

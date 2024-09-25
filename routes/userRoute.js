@@ -16,12 +16,12 @@ const Cart = require('../model/cartModel')
 const User = require('../model/userModel')
 const Wishlist = require('../model/wishlistModel')
 const passport = require('passport')
-
+const checkAuthenticated = require('../middleware/otpAuth')
 
 const userCon = require('../controller/userCon')
 const addressCon = require('../controller/addressCon');
 
-user_route.get('/',auth.isLogout,userCon.loadHome)
+user_route.get('/',checkAuthenticated,auth.isLogout,userCon.loadHome)
 user_route.get('/home',auth.isLogout,userCon.loadHome)
 user_route.get('/userhome',auth.isLogin,auth.isBlocked,userCon.loadHome)
 
@@ -44,11 +44,11 @@ user_route.post('/resend-otp',userCon.resendOTP)
 user_route.get('/shop', userCon.shopLoad)
 user_route.get('/singleProduct/:productId', userCon.singleProductLoad)
 
-user_route.get('/profile',auth.isLogin, userCon.profileLoad)
+user_route.get('/profile', auth.isLogin, userCon.profileLoad)
 user_route.get('/editProfile', userCon.editProfileLoad)
 user_route.post('/editProfile', userCon.updateProfile)
 
-user_route.get('/address', auth.isLogin,addressCon.addressLoad)
+user_route.get('/address',auth.isLogin,addressCon.addressLoad)
 user_route.get('/addAddress',auth.isLogin, addressCon.addAddressLoad)
 user_route.post('/addAddress',addressCon.addAddress)
 user_route.get('/editAddress',auth.isLogin, addressCon.editAddressLoad)

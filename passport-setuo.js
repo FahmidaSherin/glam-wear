@@ -4,12 +4,20 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require("./model/userModel");
 require('dotenv').config();
 
+const isProd = process.env.NODE_ENV === 'production';
 
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENTID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: "https://glamwear.site/auth/google/callback"
+    callbackURL: isProd ? "https://glamwear.site/auth/google/callback" : "http://localhost:3000/auth/google/callback"
 },
+
+
+// passport.use(new GoogleStrategy({
+//     clientID: process.env.CLIENTID,
+//     clientSecret: process.env.CLIENT_SECRET,
+//     callbackURL: "https://glamwear.site/auth/google/callback"
+// },
 async (accessToken, refreshToken, profile, done) => {
     try {
        

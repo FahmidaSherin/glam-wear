@@ -64,7 +64,7 @@ done(error, null);
 
 
 module.exports = {
-googleAuth: passport.authenticate("google", { scope: ["profile", "email"] }),
+googleAuth: passport.authenticate("google", { scope: ["profile", "email"],  prompt: "select_account" }),
 
 googleCallback: passport.authenticate("google", {
 failureRedirect: "/login",

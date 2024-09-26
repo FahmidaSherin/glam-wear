@@ -274,10 +274,7 @@ const verifyMail = async (req, res) => {
 
 
 const generateOTP = () => {
-    return randomstring.generate({
-        length: 6,
-        charset: 'numeric'
-    })
+    return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
 
@@ -320,26 +317,34 @@ const verifyOTP = async (req, res) => {
 
 const resendOTP = async (req, res) => {
     try {
-        const newOTP = generateOTP()
-        console.log(newOTP, 'resend OTP')
-        const user = await User.findOne({ _id: req.session.userData._id })
-        const deleteOTP = await Otp.deleteOne({ userid: req.session.userData._id })
-        console.log('this is deleteotp',deleteOTP);
+        const newOTP = generateOTP(); // Generate numeric OTP
+        console.log(newOTP, 'Generated OTP'); // Log OTP to check its format
+
+        const user = await User.findOne({ _id: req.session.userData._id });
+        if (!user) {
+            throw new Error('User not found.');
+        }
+
+        await Otp.deleteOne({ userid: req.session.userData._id });
+        console.log('Previous OTP deleted.');
+
         const NOTP = new Otp({
             userid: req.session.userData._id,
             otp: newOTP
-        })
-        await NOTP.save()
-        user.otp = newOTP
-        await user.save();
+        });
 
-        sendVerifyMail(user.name, user.email, user._id, newOTP)
-        res.redirect('/otp')
+        await NOTP.save();
+        console.log('New OTP saved:', newOTP);
+
+        sendVerifyMail(user.name, user.email,  newOTP); // Send new OTP via email
+        console.log('OTP sent successfully to:', user.email);
+
+        res.redirect('/otp');
     } catch (error) {
-        console.log('Error in resendOTP');
-        res.status(500).send("An error occured while resendin OTP")
+        console.log('Error in resendOTP:', error.message);
+        res.status(500).send("An error occurred while resending OTP");
     }
-}
+};
 
 
 

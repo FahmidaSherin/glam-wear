@@ -79,17 +79,17 @@
 
                     <button type="submit">Verify OTP</button>
                 </form>
-                <form action="resend-otp" method="post">
+                <form id="resend-otp-form" action="/resend-otp" method="post">
                     <div id="timer-container">
                         <p id="timer"></p>
-                        <button id="resend-btn" onclick="resendOTP()" style="display:none;">Resend OTP</button>
+                        <button id="resend-btn" style="display:none;">Resend OTP</button>
                     </div>
                 </form>
     </div>
 
     <script>
 
-        const timerDuration = 60;
+        const timerDuration = 30;
 
 
         function startTimer() {
@@ -111,31 +111,9 @@
             }, 1000);
         }
         function resendOTP() {
-    alert("Resending OTP...");
-
-    fetch('/resend-otp', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId:user._id })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('OTP has been resent!');
-            // Restart the timer if needed
-            startTimer();
-        } else {
-            alert('Failed to resend OTP. Please try again.');
-        }
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again later.');
-    });
+    document.getElementById('resend-otp-form').submit();
+    startTimer(); // Restart the timer when the user resends OTP
 }
-
 
         window.onload = startTimer;
     </script>

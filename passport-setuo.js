@@ -51,11 +51,15 @@ async (accessToken, refreshToken, profile, done) => {
 
 passport.serializeUser((user, done) => {
 done(null, user.id);
+console.log('passport...........................');
+
 });
 
 passport.deserializeUser(async (id, done) => {
 try {
 const user = await User.findById(id);
+console.log('3hijnn11111111111111')
+
 done(null, user);
 } catch (error) {
 done(error, null);
@@ -75,10 +79,13 @@ setupSession: (req, res, next) => {
     console.log('setupSession');
 
 if (req.isAuthenticated()) {
+console.log('passport11111111111111')
  
     req.session.user_id = req.user._id;
 } 
 console.log(req.session.user_id);
+console.log('passport22222222222222222222222222222')
+
 res.redirect("/userhome");
     },
 };

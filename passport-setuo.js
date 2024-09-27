@@ -5,10 +5,14 @@ const User = require("./model/userModel");
 require('dotenv').config();
 
 
+const callbackURL = process.env.NODE_ENV === 'production'
+  ? 'https://glamwear.site/auth/google/callBack'
+  : 'http://localhost:3000/auth/google/callback';
+
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENTID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: 'https://glamwear.site/auth/google/callBack',
+    callbackURL: callbackURL,
 },
 
 async (accessToken, refreshToken, profile, done) => {

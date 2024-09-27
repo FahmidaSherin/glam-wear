@@ -3,8 +3,12 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require("./model/userModel");
 require('dotenv').config();
+const OAuth2Strategy = require('passport-oauth2');
 
-
+OAuth2Strategy.prototype.parseErrorResponse = function(body, status) {
+    console.log('Google OAuth Error Response:', body); // Log the error response
+    return OAuth2Strategy.TokenError.prototype.parseErrorResponse.call(this, body, status);
+  };
 
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENTID,
@@ -26,7 +30,7 @@ async (accessToken, refreshToken, profile, done) => {
 
         if (!user) {
                   
-            user = await User.create({
+            const newUser = await User.create({
                 googleId,
                 email: profile._json.email,
                 name,
@@ -69,7 +73,7 @@ done(error, null);
 
 
 module.exports = {
-googleAuth: passport.authenticate("google", { scope: ["profile", "email"],  prompt: "select_account" }),
+googleAuth: passport.authenticate("google", { scope: ["profile", "email"] }),
 
 googleCallback: passport.authenticate("google", {
 failureRedirect: "/login",

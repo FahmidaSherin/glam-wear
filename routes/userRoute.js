@@ -29,7 +29,7 @@ user_route.get('/auth/google', googleLogin.googleAuth);
 user_route.get("/auth/google/callback", googleLogin.googleCallback, googleLogin.setupSession);
 
 user_route.get('/register',auth.isLogout, userCon.loadRegister);
-user_route.post('/register', userCon.insertUser);
+user_route.post('/register',auth.isLogout, userCon.insertUser);
 
 user_route.get('/login',auth.isLogout,userCon.loginLoad)
 user_route.post('/login',userCon.verifyLogin)
@@ -37,9 +37,9 @@ user_route.post('/login',userCon.verifyLogin)
 user_route.get('/logout',auth.isLogin,userCon.userLogout)
 
  user_route.get('/verify',userCon.sendVerifyMail)
-user_route.get('/otp', userCon.otpLoad) 
-user_route.post('/verify-otp', userCon.verifyOTP);
-user_route.post('/resend-otp',userCon.resendOTP)
+user_route.get('/otp',auth.isLogout,auth.isBlocked, userCon.otpLoad) 
+user_route.post('/verify-otp',auth.isLogout, userCon.verifyOTP);
+user_route.post('/resend-otp',auth.isLogout,userCon.resendOTP)
 
 user_route.get('/shop', userCon.shopLoad)
 user_route.get('/singleProduct/:productId', userCon.singleProductLoad)

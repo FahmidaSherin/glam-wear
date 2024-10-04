@@ -19,7 +19,7 @@ const isLogin = async (req, res, next) => {
 const isLogout = async (req, res, next) => {
     try {
         if (req.session.user_id) {
-            res.redirect('/userhome')
+            res.redirect('/home')
 
         } else {
             next()

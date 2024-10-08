@@ -25,8 +25,8 @@ user_route.get('/',checkAuthenticated,auth.isLogout,userCon.loadHome)
 user_route.get('/home',auth.isLogout,userCon.loadHome)
 user_route.get('/userhome',auth.isLogin,auth.isBlocked,userCon.loadHome)
 
-user_route.get('/auth/google', googleLogin.googleAuth);
-user_route.get("/auth/google/callback", googleLogin.googleCallback, googleLogin.setupSession);
+// user_route.get('/auth/google', googleLogin.googleAuth);
+// user_route.get("/auth/google/callback", googleLogin.googleCallback, googleLogin.setupSession);
 
 user_route.get('/register',auth.isLogout, userCon.loadRegister);
 user_route.post('/register',auth.isLogout, userCon.insertUser);
